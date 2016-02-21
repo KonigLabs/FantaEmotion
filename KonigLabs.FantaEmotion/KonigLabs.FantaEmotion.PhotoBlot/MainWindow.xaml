@@ -1,0 +1,30 @@
+﻿<Window x:Class="KonigLabs.FantaEmotion.PhotoBlot.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:KonigLabs.FantaEmotion.PhotoBlot"
+        mc:Ignorable="d"
+        Title="MainWindow" Width="768" Height="512">
+    <Grid>
+        <Rectangle x:Name="BackRect"/>
+        <Rectangle x:Name="OverlayRect" MouseLeftButtonDown="UIElement_OnMouseLeftButtonDown">
+            <Rectangle.Fill>
+                <ImageBrush ImageSource="{Binding Path=Overlay, UpdateSourceTrigger=PropertyChanged}"></ImageBrush>
+            </Rectangle.Fill>
+            <Rectangle.Triggers>
+                <EventTrigger RoutedEvent="Rectangle.Loaded">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetName="OverlayRect"
+                                    Storyboard.TargetProperty="Opacity"
+                                    From="0.0" To="1.0"
+                                    Duration="0:0:5"
+                                    AutoReverse="False"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Rectangle.Triggers>
+        </Rectangle>
+    </Grid>
+</Window>

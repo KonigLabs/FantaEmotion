@@ -1,0 +1,14 @@
+﻿<Application x:Class="KonigLabs.FantaEmotion.View.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:KonigLabs.FantaEmotion.View">
+
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Other/Mappings.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/KonigLabs.FantaEmotion.Themes;component/Styles/CustomButton.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

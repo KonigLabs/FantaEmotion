@@ -1,0 +1,14 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="clr-namespace:KonigLabs.FantaEmotion.View.Controls"
+                    xmlns:viewModels="clr-namespace:KonigLabs.FantaEmotion.ViewModel.ViewModels;assembly=KonigLabs.FantaEmotion.ViewModel">
+    <DataTemplate DataType="{x:Type viewModels:TakePhotoViewModel}">
+        <controls:TakePhotoCtl/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type viewModels:WelcomViewModel}">
+        <controls:WelcomCtl/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type viewModels:TakePhotoResultViewModel}">
+        <controls:TakePhotoResultCtl/>
+    </DataTemplate>
+</ResourceDictionary>

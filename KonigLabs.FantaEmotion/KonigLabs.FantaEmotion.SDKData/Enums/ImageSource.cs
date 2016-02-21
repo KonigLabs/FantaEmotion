@@ -1,0 +1,14 @@
+﻿namespace KonigLabs.FantaEmotion.SDKData.Enums
+{
+    /// <summary>
+    /// TODO - document this enum
+    /// Image Source
+    /// </summary>
+    /// <remarks></remarks>
+    public enum ImageSource : uint
+    {
+        FullView = 0,
+        Thumbnail,
+        Preview
+    }
+}

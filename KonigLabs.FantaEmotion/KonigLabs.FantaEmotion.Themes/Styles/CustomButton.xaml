@@ -1,0 +1,32 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Style TargetType="{x:Type Button}" >
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Foreground" Value="#000" />
+        <Setter Property="FontSize" Value="10" />
+        <Setter Property="Padding" Value="0,0" />
+        <Setter Property="Tag" Value="True"></Setter>
+        <Setter Property="Width" Value="150"/>
+        <Setter Property="Height" Value="50"/>
+        <Setter Property="FontSize" Value="25"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Border
+                              x:Name="root"
+                              CornerRadius="20"
+                              BorderBrush="{TemplateBinding BorderBrush}"
+                              BorderThickness="{TemplateBinding BorderThickness}"
+                              Background="{TemplateBinding Background}">
+                        <TextBlock
+                                Padding="{TemplateBinding Padding}"
+                                FontSize="{TemplateBinding FontSize}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Text="{Binding Path=Content, RelativeSource={RelativeSource TemplatedParent}}"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>
