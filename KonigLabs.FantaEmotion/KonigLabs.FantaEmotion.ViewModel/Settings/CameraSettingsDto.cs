@@ -1,12 +1,11 @@
-﻿using KonigLabs.FantaEmotion.SDKData.Enums;
+﻿using System;
+using KonigLabs.FantaEmotion.SDKData.Enums;
 
 namespace KonigLabs.FantaEmotion.ViewModel.Settings
 {
+    [Serializable]
     public class CameraSettingsDto
     {
-        //NOT SUPPORTED on EOS 1100D
-        public AEMode SelectedAeMode { get; set; }
-
         public ExposureCompensation SelectedCompensation { get; set; }
 
         public WhiteBalance SelectedWhiteBalance { get; set; }

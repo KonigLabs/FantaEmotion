@@ -32,7 +32,6 @@ namespace KonigLabs.FantaEmotion.Camera
         {
             Debug.WriteLine("disposing...");
             CameraHandler.ErrorEvent -= CameraHandlerOnErrorEvent;
-            CameraHandler.TransferEvent -= CameraHandlerOnTransferEvent;
             CameraHandler.CameraAdded -= SDK_CameraAdded;
             CameraHandler.LiveViewUpdated -= SDK_LiveViewUpdated;
             CameraHandler.ProgressChanged -= SDK_ProgressChanged;
@@ -47,7 +46,6 @@ namespace KonigLabs.FantaEmotion.Camera
             CameraHandler.Initialize();
 
             CameraHandler.ErrorEvent += CameraHandlerOnErrorEvent;
-            CameraHandler.TransferEvent += CameraHandlerOnTransferEvent;
             CameraHandler.CameraAdded += SDK_CameraAdded;
             CameraHandler.LiveViewUpdated += SDK_LiveViewUpdated;
             CameraHandler.ProgressChanged += SDK_ProgressChanged;
@@ -77,20 +75,7 @@ namespace KonigLabs.FantaEmotion.Camera
                 return false;
 
             CameraHandler.StopFilming();
-            return TransferComplete.Task.Result;
-        }
-
-        private TaskCompletionSource<bool> _transferComplete;
-
-        private TaskCompletionSource<bool> TransferComplete
-        {
-            get { return _transferComplete ?? new TaskCompletionSource<bool>(); }
-            set { _transferComplete = value; }
-        }
-
-        private void CameraHandlerOnTransferEvent(object sender, TransferCompleteEvent transferInfo)
-        {
-            TransferComplete.SetResult(transferInfo.ErrorCode == ReturnValue.Ok);
+            return true;
         }
 
         private void CameraHandlerOnErrorEvent(object sender, ErrorEvent errorInfo)

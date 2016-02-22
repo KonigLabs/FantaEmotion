@@ -117,7 +117,7 @@ namespace KonigLabs.FantaEmotion.PatternProcessing.ImageProcessors
             return result;
         }
 
-        private static DirectoryInfo GetVideoDirectory()
+        public DirectoryInfo GetVideoDirectory()
         {
             var baseDir = AppDomain.CurrentDomain.BaseDirectory;
             var info = !Directory.Exists(Path.Combine(baseDir, "Videos"))
@@ -139,7 +139,7 @@ namespace KonigLabs.FantaEmotion.PatternProcessing.ImageProcessors
                 return null;
 
             var info = GetVideoDirectory();
-             var lastVideo = info.EnumerateFiles("MVI*.mov").OrderByDescending(p => p.CreationTimeUtc).FirstOrDefault();
+            var lastVideo = info.EnumerateFiles("MVI*.mov").OrderByDescending(p => p.CreationTimeUtc).FirstOrDefault();
 
             return lastVideo?.FullName;
         }

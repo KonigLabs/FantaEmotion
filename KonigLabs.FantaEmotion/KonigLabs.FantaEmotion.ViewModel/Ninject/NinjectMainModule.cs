@@ -29,8 +29,8 @@ namespace KonigLabs.FantaEmotion.ViewModel.Ninject
             {
                 var children = new List<IViewModelFactory>
                 {
-                    x.Kernel.Get<WelcomViewModelFactory>()
-
+                    x.Kernel.Get<WelcomViewModelFactory>(),
+                    x.Kernel.Get<TakePhotoViewModelFactory>()
                 };
 
                 return new ChildrenViewModelsFactory(children);
@@ -40,7 +40,6 @@ namespace KonigLabs.FantaEmotion.ViewModel.Ninject
                 var children = new List<IViewModelFactory>
                 {
                     x.Kernel.Get<TakePhotoViewModelFactory>()
-
                 };
 
                 return new ChildrenViewModelsFactory(children);

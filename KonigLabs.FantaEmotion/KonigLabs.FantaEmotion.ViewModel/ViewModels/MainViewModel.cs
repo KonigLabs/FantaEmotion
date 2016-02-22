@@ -16,7 +16,8 @@ namespace KonigLabs.FantaEmotion.ViewModel.ViewModels
             messenger.Register<ContentChangedMessage>(this, OnContentChanged);
             _messenger = messenger;
             _navigator = navigator;
-            _navigator.NavigateForward<WelcomViewModel>(null);
+            //_navigator.NavigateForward<WelcomViewModel>(null);
+            _navigator.NavigateForward<TakePhotoViewModel>(null);
         }
 
         private BaseViewModel _currentContent;

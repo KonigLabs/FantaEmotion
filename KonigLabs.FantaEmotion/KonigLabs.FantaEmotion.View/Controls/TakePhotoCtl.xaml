@@ -9,24 +9,156 @@
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance viewModels:TakePhotoViewModel}">
 
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+    </UserControl.Resources>
+
     <Grid>
         <Grid.Resources>
-            <converters:LiveViewImageConverter x:Key="LiveViewImageConverter"/>
             <converters:ByteArrayToImageSourceConverter x:Key="ByteArrayToImageSourceConverter"/>
         </Grid.Resources>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="250"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal">
-            <Image Source="../Resources/logo.png"/>
-            <TextBlock Text="{Binding Path=Counter}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        </StackPanel>
-        <Image Source="{Binding Path=LiveViewImageStream, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ByteArrayToImageSourceConverter}}" Width="768" Height="512"  Grid.Row="1"/>
-        <StackPanel Orientation="Horizontal" Grid.Row="2">
-            <Button Command="{Binding Path=TakePictureCommand}">Take photo</Button>
-            <Button Command="{Binding Path=TakeVideoCommand}">Take video</Button>
-        </StackPanel>
+        <Image Source="{Binding Path=LiveViewImageStream, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ByteArrayToImageSourceConverter}}" Stretch="Uniform" Height="900">
+            <Image.LayoutTransform>
+                <RotateTransform Angle="90"/>
+            </Image.LayoutTransform>
+        </Image>
+        <Button Command="{Binding Path=TakeVideoCommand}" Opacity="0.5" Width="150" Height="50">Take video</Button>
+        <Border HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Visibility="{Binding Path=IsRecordingVideo, Converter={StaticResource BoolToVis}}"
+                Background="Transparent"
+                Opacity="0.6">
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid VerticalAlignment="Top" HorizontalAlignment="Center">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Path Width="192"
+                            Height="128"  
+                            Stretch="Fill"
+                            StrokeThickness="6"
+                            StrokeStartLineCap="Round"
+                            StrokeEndLineCap="Round"   
+                            StrokeLineJoin="Round"
+                            Stroke="White"
+                            Fill="White"   
+                            Data="F1 M 48.5143,170L 144.514,73.9999L 195.514,74L 121.515,150L 304.514,150L 304.514,190L 121.514,190L 195.514,266L 144.514,266L 48.5143,170 Z "
+                            RenderTransformOrigin="0.5,0.5">
+                        <Path.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform ScaleX="0.7" ScaleY="0.7"/>
+                                <SkewTransform/>
+                                <RotateTransform Angle="90"/>
+                                <TranslateTransform/>
+                            </TransformGroup>
+                        </Path.RenderTransform>
+                        <Path.Effect>
+                            <DropShadowEffect ShadowDepth="6"
+                                    Direction="135"
+                                    Color="Black"
+                                    BlurRadius="0.0"/>
+                        </Path.Effect>
+                    </Path>
+                    <TextBlock Foreground="White" FontSize="70" Grid.Row="1">
+                        <TextBlock.Style>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="Text" Value="Посмотрите в камеру"/>
+                                <Setter Property="Effect">
+                                    <Setter.Value>
+                                        <DropShadowEffect ShadowDepth="6"
+                                                Direction="135"
+                                                Color="Black"
+                                                BlurRadius="0.0"/>
+                                    </Setter.Value>
+                                </Setter>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Path=Counter}" Value="3">
+                                        <Setter Property="Text" Value="Приготовьтесь!" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Path=Counter}" Value="0">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                    <Grid.Style>
+                        <Style TargetType="{x:Type Grid}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Path=Counter}" Value="0">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
+                </Grid>
+
+                <TextBlock Grid.Row="1"
+                        Margin="0,-60"
+                        Text="{Binding Path=Counter}" 
+                        VerticalAlignment="Top"
+                        HorizontalAlignment="Center"
+                        FontSize="220"
+                        Foreground="White">
+                    <TextBlock.Style>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Setter Property="Effect">
+                                <Setter.Value>
+                                    <DropShadowEffect ShadowDepth="6"
+                                            Direction="135"
+                                            Color="Black"
+                                            BlurRadius="0.0"/>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Path=Counter}" Value="4">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Path=Counter}" Value="0">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+
+                <TextBlock Grid.Row="2"
+                        Padding="0,10,0,0"
+                        Text="{Binding ImageNumber, StringFormat='Фото {0}'}"
+                        VerticalAlignment="Top"
+                        HorizontalAlignment="Center"
+                        FontSize="50"
+                        Foreground="White">
+                    <TextBlock.Style>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Setter Property="Effect">
+                                <Setter.Value>
+                                    <DropShadowEffect ShadowDepth="6"
+                                            Direction="135"
+                                            Color="Black"
+                                            BlurRadius="0.0"/>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Path=Counter}" Value="4">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Path=Counter}" Value="0">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </Grid>
+        </Border>
     </Grid>
 </UserControl>

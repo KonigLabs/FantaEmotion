@@ -132,7 +132,7 @@ namespace KonigLabs.FantaEmotion.ViewModel.ViewModels
                     var ev = cameraErrorInfo as ErrorEvent;
                     if (ev != null && ev.ErrorCode == ReturnValue.TakePictureAutoFocusNG)
                     {
-                        // _dialogService.ShowInfo("Не удалось сфокусироваться. Пожалуйста, повторите попытку.");
+                        //_dialogService.ShowInfo("Не удалось сфокусироваться. Пожалуйста, повторите попытку.");
                         Dispose();
                         Initialize();
                     }
@@ -167,6 +167,12 @@ namespace KonigLabs.FantaEmotion.ViewModel.ViewModels
 
         private async Task<string> RecordVideo()
         {
+            for (var i = 3; i >= 0; --i)
+            {
+                Counter = i;
+                await Task.Delay(TimeSpan.FromSeconds(1));
+            }
+
             return await Task.Run(async () =>
             {
                 _imageProcessor.StartRecordVideo();
@@ -175,14 +181,32 @@ namespace KonigLabs.FantaEmotion.ViewModel.ViewModels
                 await Task.Delay(TimeSpan.FromSeconds(5));
 
                 var newVideoPath = await _imageProcessor.StopRecordVideo();
-                _navigator.NavigateForward<TakeVideoResultViewModel>(this, newVideoPath);
+
+                //todo временно. сделать по event'у (TransferCompleteEvent лежит в SDKData)
+                await Task.Delay(TimeSpan.FromSeconds(6));
+                //todo убрать. есть в _imageProcessor.StopRecordVideo()
+                var info = _imageProcessor.GetVideoDirectory();
+                var lastVideo = info.EnumerateFiles("MVI*.mov").OrderByDescending(p => p.CreationTimeUtc).FirstOrDefault();
+
+                _navigator.NavigateForward<TakeVideoResultViewModel>(this, /*newVideoPath*/lastVideo.FullName);
                 return newVideoPath;
             });
         }
 
+        private bool _isRecordingVideo;
+
         public bool IsRecordingVideo
         {
-            get { return _imageProcessor.IsRecordingVideo(); }
+            get
+            {
+                var tmp = _imageProcessor.IsRecordingVideo();
+                if (_isRecordingVideo != tmp)
+                {
+                    _isRecordingVideo = tmp;
+                    RaisePropertyChanged();
+                }
+                return _isRecordingVideo;
+            }
         }
 
         private void StartLiveView()

@@ -11,11 +11,26 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
+            <RowDefinition Height="900"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="50"/>
         </Grid.RowDefinitions>
-        <MediaElement Source="{Binding Path=VideoPath}"  Width="768" Height="512" Stretch="Uniform" />
+        <MediaElement x:Name="MediaElement" Stretch="Uniform">
+            <MediaElement.Triggers>
+                <EventTrigger RoutedEvent="MediaElement.Loaded">
+                    <EventTrigger.Actions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <MediaTimeline Source="{Binding Path=VideoPath}" Storyboard.TargetName="MediaElement" RepeatBehavior="Forever"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger.Actions>
+                </EventTrigger>
+            </MediaElement.Triggers>
+            <MediaElement.LayoutTransform>
+                <RotateTransform Angle="90"/>
+            </MediaElement.LayoutTransform>
+        </MediaElement>
         <Button Grid.Row="1" Command="{Binding RepeatCommand}">Еще раз</Button>
         <Button Grid.Row="2" Command="{Binding NextCommnad}">Продолжить</Button>
     </Grid>

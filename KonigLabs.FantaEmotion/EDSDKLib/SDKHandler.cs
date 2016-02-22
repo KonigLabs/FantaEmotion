@@ -143,8 +143,6 @@ namespace EDSDKLib
         /// </summary>
         public event EventHandler CameraHasShutdown;
 
-        public event EventHandler<TransferCompleteEvent> TransferEvent;
-
         #endregion
 
         #endregion
@@ -481,12 +479,6 @@ namespace EDSDKLib
         {
             var handler = ErrorEvent;
             handler?.Invoke(this, new ErrorEvent(errorCode));
-        }
-
-        private void RaiseTransferEvent(ReturnValue errorCode)
-        {
-            var handler = TransferEvent;
-            handler?.Invoke(this, new TransferCompleteEvent(errorCode));
         }
 
         /// <summary>
@@ -826,8 +818,6 @@ namespace EDSDKLib
                 DownloadData(objectPointer, streamRef);
                 //release stream
                 _returnValueManager.HandleFunctionReturnValue(EdsdkInvokes.Release(streamRef));
-                //raise complete event
-                Dispatcher.CurrentDispatcher.Invoke(() => RaiseTransferEvent(ReturnValue.Ok));
             }, MainCamera);
         }
 
@@ -1458,7 +1448,6 @@ namespace EDSDKLib
             //This does not work at the moment, the SDK will hang for unknown reasons
             SetSetting((uint) PropertyId.SaveTo, PrevSaveTo, MainCamera);
             IsFilming = false;
-            //Dispatcher.CurrentDispatcher.Invoke(() => RaiseTransferEvent(ReturnValue.Ok));
         }
 
         #endregion
