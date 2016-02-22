@@ -100,6 +100,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\TakeVideoResultCtl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\TakePhotoResultCtl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -118,6 +122,9 @@
     </Compile>
     <Compile Include="Controls\TakePhotoCtl.xaml.cs">
       <DependentUpon>TakePhotoCtl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\TakeVideoResultCtl.xaml.cs">
+      <DependentUpon>TakeVideoResultCtl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\TakePhotoResultCtl.xaml.cs">
       <DependentUpon>TakePhotoResultCtl.xaml</DependentUpon>

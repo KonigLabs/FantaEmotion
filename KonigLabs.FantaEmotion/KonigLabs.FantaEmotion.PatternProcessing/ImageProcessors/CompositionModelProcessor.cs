@@ -98,13 +98,13 @@ namespace KonigLabs.FantaEmotion.PatternProcessing.ImageProcessors
                 //await Task.Delay(TimeSpan.FromSeconds(1));
 
                 //RaiseImageNumberChanged(i + 1);
-               // await Task.Delay(TimeSpan.FromSeconds(1), token);
+                //await Task.Delay(TimeSpan.FromSeconds(1), token);
                 token.ThrowIfCancellationRequested();
                 var picture = await _imageProcessor.DoTakePicture();
                 pictures.Add(picture);
 
                 token.ThrowIfCancellationRequested();
-               // await Task.Delay(TimeSpan.FromSeconds(3), token); //todo
+                //await Task.Delay(TimeSpan.FromSeconds(3), token); //todo
 
                 SetCameraSettings(selectedAeMode, selectedWhiteBalance,
                     selectedAvValue, selectedIsoSensitivity,
@@ -117,10 +117,43 @@ namespace KonigLabs.FantaEmotion.PatternProcessing.ImageProcessors
             return result;
         }
 
+        private static DirectoryInfo GetVideoDirectory()
+        {
+            var baseDir = AppDomain.CurrentDomain.BaseDirectory;
+            var info = !Directory.Exists(Path.Combine(baseDir, "Videos"))
+                ? Directory.CreateDirectory(Path.Combine(baseDir, "Videos"))
+                : new DirectoryInfo(Path.Combine(baseDir, "Videos"));
+            return info;
+        }
+
+        public void StartRecordVideo()
+        {
+            _imageProcessor.StartRecordVideo(GetVideoDirectory().FullName);
+        }
+
+        public async Task<string> StopRecordVideo()
+        {
+            var result = await _imageProcessor.StopRecordVideo();
+
+            if (!result)
+                return null;
+
+            var info = GetVideoDirectory();
+             var lastVideo = info.EnumerateFiles("MVI*.mov").OrderByDescending(p => p.CreationTimeUtc).FirstOrDefault();
+
+            return lastVideo?.FullName;
+        }
+
+        public bool IsRecordingVideo()
+        {
+            return _imageProcessor.IsFilming();
+        }
+
         private void SetCameraSettings(AEMode aeMode, WhiteBalance balance, ApertureValue apertureValue,
             CameraISOSensitivity cameraIsoSensitivity, ShutterSpeed shutterSpeed)
         {
-            _imageProcessor.SetSetting((uint)PropertyId.AEMode, (uint)aeMode);
+            //NOT SUPPORTED on EOS 1100D
+            //_imageProcessor.SetSetting((uint)PropertyId.AEMode, (uint)aeMode);
             _imageProcessor.SetSetting((uint)PropertyId.WhiteBalance, (uint)balance);
             _imageProcessor.SetSetting((uint)PropertyId.Av, (uint)apertureValue);
             //_imageProcessor.SetSetting((uint)PropertyId.ExposureCompensation, (uint)));

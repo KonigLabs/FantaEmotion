@@ -4,7 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:converters="clr-namespace:KonigLabs.FantaEmotion.View.Convertrs"
-             xmlns:local="clr-namespace:KonigLabs.FantaEmotion.View.Controls">
+             xmlns:local="clr-namespace:KonigLabs.FantaEmotion.View.Controls"
+             xmlns:viewModels="clr-namespace:KonigLabs.FantaEmotion.ViewModel.ViewModels;assembly=KonigLabs.FantaEmotion.ViewModel"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance viewModels:TakePhotoViewModel}">
 
     <Grid>
         <Grid.Resources>
@@ -18,9 +21,12 @@
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal">
             <Image Source="../Resources/logo.png"/>
-            <TextBlock VerticalAlignment="Center">на Старт</TextBlock>
+            <TextBlock Text="{Binding Path=Counter}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         </StackPanel>
-        <Image Source="{Binding LiveViewImageStream, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ByteArrayToImageSourceConverter}}" Width="768" Height="512"  Grid.Row="1"/>
-        <Button Grid.Row="2" Command="{Binding TakePictureCommand}">Take photo</Button>
+        <Image Source="{Binding Path=LiveViewImageStream, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ByteArrayToImageSourceConverter}}" Width="768" Height="512"  Grid.Row="1"/>
+        <StackPanel Orientation="Horizontal" Grid.Row="2">
+            <Button Command="{Binding Path=TakePictureCommand}">Take photo</Button>
+            <Button Command="{Binding Path=TakeVideoCommand}">Take video</Button>
+        </StackPanel>
     </Grid>
 </UserControl>

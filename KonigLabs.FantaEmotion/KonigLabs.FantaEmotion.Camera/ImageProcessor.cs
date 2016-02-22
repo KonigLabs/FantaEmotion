@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using EDSDKLib;
+using KonigLabs.FantaEmotion.SDKData.Enums;
 using KonigLabs.FantaEmotion.SDKData.Events;
 
 namespace KonigLabs.FantaEmotion.Camera
@@ -31,6 +32,7 @@ namespace KonigLabs.FantaEmotion.Camera
         {
             Debug.WriteLine("disposing...");
             CameraHandler.ErrorEvent -= CameraHandlerOnErrorEvent;
+            CameraHandler.TransferEvent -= CameraHandlerOnTransferEvent;
             CameraHandler.CameraAdded -= SDK_CameraAdded;
             CameraHandler.LiveViewUpdated -= SDK_LiveViewUpdated;
             CameraHandler.ProgressChanged -= SDK_ProgressChanged;
@@ -45,6 +47,7 @@ namespace KonigLabs.FantaEmotion.Camera
             CameraHandler.Initialize();
 
             CameraHandler.ErrorEvent += CameraHandlerOnErrorEvent;
+            CameraHandler.TransferEvent += CameraHandlerOnTransferEvent;
             CameraHandler.CameraAdded += SDK_CameraAdded;
             CameraHandler.LiveViewUpdated += SDK_LiveViewUpdated;
             CameraHandler.ProgressChanged += SDK_ProgressChanged;
@@ -52,6 +55,42 @@ namespace KonigLabs.FantaEmotion.Camera
             CameraHandler.CameraHasShutdown += SDK_CameraHasShutdown;
             RefreshCamera();
             IsInit = true;
+        }
+
+        public bool IsFilming()
+        {
+            return CameraHandler.IsFilming;
+        }
+
+        public bool StartRecordVideo(string outDirectory)
+        {
+            if (IsFilming())
+                return false;
+
+            CameraHandler.StartFilming(outDirectory);
+            return true;
+        }
+
+        public async Task<bool> StopRecordVideo()
+        {
+            if (!IsFilming())
+                return false;
+
+            CameraHandler.StopFilming();
+            return TransferComplete.Task.Result;
+        }
+
+        private TaskCompletionSource<bool> _transferComplete;
+
+        private TaskCompletionSource<bool> TransferComplete
+        {
+            get { return _transferComplete ?? new TaskCompletionSource<bool>(); }
+            set { _transferComplete = value; }
+        }
+
+        private void CameraHandlerOnTransferEvent(object sender, TransferCompleteEvent transferInfo)
+        {
+            TransferComplete.SetResult(transferInfo.ErrorCode == ReturnValue.Ok);
         }
 
         private void CameraHandlerOnErrorEvent(object sender, ErrorEvent errorInfo)
@@ -62,7 +101,7 @@ namespace KonigLabs.FantaEmotion.Camera
         protected virtual void OnStreamChanged(byte[] imageBuffer)
         {
             var handler = StreamChanged;
-            if (handler != null) handler(this, imageBuffer);
+            handler?.Invoke(this, imageBuffer);
         }
 
         protected virtual void OnErrorEvent(ErrorEvent error)
@@ -78,7 +117,7 @@ namespace KonigLabs.FantaEmotion.Camera
         protected virtual void RaiseCameraEvent(CameraEventBase eventBase)
         {
             var handler = CameraErrorEvent;
-            if (handler != null) handler(this, eventBase);
+            handler?.Invoke(this, eventBase);
         }
 
         public ObservableCollection<EDSDKLib.Camera> Cameras { get; private set; }
@@ -87,6 +126,8 @@ namespace KonigLabs.FantaEmotion.Camera
         {
             if (!IsInit)
                 return;
+
+            StopRecordVideo();
 
             Terminate();
 
@@ -208,6 +249,9 @@ namespace KonigLabs.FantaEmotion.Camera
             }
 
             SelectedCamera = Cameras.FirstOrDefault();
+
+            if (SelectedCamera == null)
+                throw new Exception("Камера не найдена");
         }
 
         private bool OpenSession()

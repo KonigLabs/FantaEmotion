@@ -92,11 +92,13 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Factories\TakeVideoResultViewModelFactory.cs" />
     <Compile Include="Factories\TakePhotoResultViewModelFactory.cs" />
     <Compile Include="Factories\TakePhotoViewModelFactory.cs" />
     <Compile Include="Factories\WelcomViewModelFactory.cs" />
     <Compile Include="Providers\SettingsProvider.cs" />
     <Compile Include="Settings\CameraSettingsDto.cs" />
+    <Compile Include="ViewModels\TakeVideoResultViewModel.cs" />
     <Compile Include="ViewModels\TakePhotoResultViewModel.cs" />
     <Compile Include="ViewModels\WelcomViewModel.cs" />
     <Compile Include="Ninject\NinjectMainModule.cs" />

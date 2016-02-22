@@ -21,6 +21,7 @@ namespace KonigLabs.FantaEmotion.ViewModel.Ninject
             Bind<TakePhotoViewModelFactory>().ToSelf();
             Bind<WelcomViewModelFactory>().ToSelf();
             Bind<TakePhotoResultViewModelFactory>().ToSelf();
+            Bind<TakeVideoResultViewModelFactory>().ToSelf();
             Bind<IViewModelNavigator>().To<ViewModelNavigator>()
                 .WithConstructorArgument(typeof(IChildrenViewModelsFactory),
                     x => new ChildrenViewModelsFactory(Enumerable.Empty<IViewModelFactory>()));
@@ -48,7 +49,8 @@ namespace KonigLabs.FantaEmotion.ViewModel.Ninject
             {
                 var children = new List<IViewModelFactory>
                 {
-                    x.Kernel.Get<TakePhotoResultViewModelFactory>()
+                    x.Kernel.Get<TakePhotoResultViewModelFactory>(),
+                    x.Kernel.Get<TakeVideoResultViewModelFactory>()
                 };
 
                 return new ChildrenViewModelsFactory(children);

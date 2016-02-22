@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using KonigLabs.FantaEmotion.CommonViewModels.Behaviors;
 using KonigLabs.FantaEmotion.CommonViewModels.Messenger;
 using KonigLabs.FantaEmotion.CommonViewModels.ViewModels;
@@ -11,6 +10,7 @@ namespace KonigLabs.FantaEmotion.ViewModel.ViewModels
     {
         private IViewModelNavigator _navigator;
         private IMessenger _messenger;
+
         public MainViewModel(IViewModelNavigator navigator, IMessenger messenger)
         {
             messenger.Register<ContentChangedMessage>(this, OnContentChanged);
@@ -18,6 +18,7 @@ namespace KonigLabs.FantaEmotion.ViewModel.ViewModels
             _navigator = navigator;
             _navigator.NavigateForward<WelcomViewModel>(null);
         }
+
         private BaseViewModel _currentContent;
 
         public event EventHandler<ShowWindowEventArgs> ShowWindow;
@@ -34,12 +35,10 @@ namespace KonigLabs.FantaEmotion.ViewModel.ViewModels
 
         private void OnContentChanged(ContentChangedMessage message)
         {
-            if (CurrentContent != null)
-                CurrentContent.Dispose();
+            CurrentContent?.Dispose();
 
             CurrentContent = message.Content;
-            if (CurrentContent != null)
-                CurrentContent.Initialize();
+            CurrentContent?.Initialize();
         }
     }
 }

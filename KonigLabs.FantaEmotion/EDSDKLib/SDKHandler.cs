@@ -10,6 +10,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Threading;
 using EDSDKLib.CommandQueue;
 using EDSDKLib.Invokes;
 using EDSDKLib.Managers;
@@ -141,6 +142,8 @@ namespace EDSDKLib
         /// If the camera is disconnected or shuts down, this event is fired
         /// </summary>
         public event EventHandler CameraHasShutdown;
+
+        public event EventHandler<TransferCompleteEvent> TransferEvent;
 
         #endregion
 
@@ -452,7 +455,7 @@ namespace EDSDKLib
 
         #endregion
 
-        #region Eventhandling
+        #region EventHandling
 
         /// <summary>
         /// A new camera was plugged into the computer
@@ -462,7 +465,7 @@ namespace EDSDKLib
         private uint SDKHandler_CameraAddedEvent(IntPtr inContext)
         {
             //Handle new camera here
-            if (CameraAdded != null) CameraAdded();
+            CameraAdded?.Invoke();
             return (uint) ReturnValue.Ok;
         }
 
@@ -471,15 +474,19 @@ namespace EDSDKLib
         private void RaiseItemDownloaded(byte[] stream)
         {
             var handler = ItemDownloaded;
-            if (handler != null)
-                handler(stream);
+            handler?.Invoke(stream);
         }
 
         private void RaiseErrorEvent(ReturnValue errorCode)
         {
             var handler = ErrorEvent;
-            if (handler != null)
-                handler(this, new ErrorEvent(errorCode));
+            handler?.Invoke(this, new ErrorEvent(errorCode));
+        }
+
+        private void RaiseTransferEvent(ReturnValue errorCode)
+        {
+            var handler = TransferEvent;
+            handler?.Invoke(this, new TransferCompleteEvent(errorCode));
         }
 
         /// <summary>
@@ -542,7 +549,7 @@ namespace EDSDKLib
         private uint Camera_SDKProgressCallbackEvent(uint inPercent, IntPtr inContext, ref bool outCancel)
         {
             //Handle progress here
-            if (ProgressChanged != null) ProgressChanged((int)inPercent);
+            ProgressChanged?.Invoke((int)inPercent);
             return (uint) ReturnValue.Ok;
         }
 
@@ -781,7 +788,7 @@ namespace EDSDKLib
                 case StateEvent.JobStatusChanged:
                     break;
                 case StateEvent.Shutdown:
-                    if (CameraHasShutdown != null) CameraHasShutdown(this, new EventArgs());
+                    CameraHasShutdown?.Invoke(this, new EventArgs());
                     break;
                 case StateEvent.ShutDownTimerUpdate:
                     break;
@@ -802,21 +809,25 @@ namespace EDSDKLib
         /// </summary>
         /// <param name="Info">Pointer to the object. Get it from the SDKObjectEvent.</param>
         /// <param name="directory"></param>
-        public void DownloadImage(IntPtr ObjectPointer, string directory)
+        public void DownloadImage(IntPtr objectPointer, string directory)
         {
             SendSDKCommand(cam =>
             {
                 DirectoryItemInformation dirInfo;
                 IntPtr streamRef;
                 //get information about object
-                _returnValueManager.HandleFunctionReturnValue(EdsdkInvokes.GetDirectoryItemInformation(ObjectPointer, out dirInfo));
+                _returnValueManager.HandleFunctionReturnValue(EdsdkInvokes.GetDirectoryItemInformation(objectPointer,
+                    out dirInfo));
                 var currentPhoto = Path.Combine(directory, dirInfo.FileName);
                 //create filestream to data
-                _returnValueManager.HandleFunctionReturnValue(EdsdkInvokes.CreateFileStream(currentPhoto, FileCreateDisposition.CreateAlways, Access.ReadWrite, out streamRef));
+                _returnValueManager.HandleFunctionReturnValue(EdsdkInvokes.CreateFileStream(currentPhoto,
+                    FileCreateDisposition.CreateAlways, Access.ReadWrite, out streamRef));
                 //download file
-                DownloadData(ObjectPointer, streamRef);
+                DownloadData(objectPointer, streamRef);
                 //release stream
                 _returnValueManager.HandleFunctionReturnValue(EdsdkInvokes.Release(streamRef));
+                //raise complete event
+                Dispatcher.CurrentDispatcher.Invoke(() => RaiseTransferEvent(ReturnValue.Ok));
             }, MainCamera);
         }
 
@@ -1045,17 +1056,19 @@ namespace EDSDKLib
         /// <returns>The current setting of the camera</returns>
         public uint GetSetting(uint propId)
         {
-            //todo not working
-            if (MainCamera.Ref != IntPtr.Zero)
-            {
-                var propertyData = IntPtr.Zero;
-                var size = 0;
-                DataType dataType;
-                _returnValueManager.HandleFunctionReturnValue(EdsdkInvokes.GetPropertySize(MainCamera.Ref, propId, 0, out dataType, out size));
-                _returnValueManager.HandleFunctionReturnValue(EdsdkInvokes.GetPropertyData(MainCamera.Ref, propId, 0, size, propertyData));
-                return 0;
-            }
-            throw new ArgumentNullException("Camera or camera reference is null/zero");
+            if (MainCamera.Ref == IntPtr.Zero)
+                throw new ArgumentNullException("Camera or camera reference is null/zero");
+
+            var size = Marshal.SizeOf(typeof (uint));
+            var propertyData = Marshal.AllocHGlobal(size);
+            DataType dataType;
+            _returnValueManager.HandleFunctionReturnValue(EdsdkInvokes.GetPropertySize(MainCamera.Ref, propId, 0,
+                out dataType, out size));
+            _returnValueManager.HandleFunctionReturnValue(EdsdkInvokes.GetPropertyData(MainCamera.Ref, propId, 0, size,
+                propertyData));
+            var result = (uint) Marshal.PtrToStructure(propertyData, typeof (uint));
+            Marshal.FreeHGlobal(propertyData);
+            return result;
         }
 
         ///// <summary>
@@ -1264,7 +1277,7 @@ namespace EDSDKLib
         {
             if (_lvTask != null && !_lvTask.IsCompleted && !_lvTask.IsCanceled && !_lvTask.IsFaulted)
             {
-                Debug.WriteLine("what da fuck????");
+                Debug.WriteLine("what the fuck????");
                 return;
             }
 
@@ -1287,7 +1300,7 @@ namespace EDSDKLib
                         }
 
                         var buffer = GetLiveViewImage(cam);
-                        if (LiveViewUpdated != null) LiveViewUpdated(this, buffer);
+                        LiveViewUpdated?.Invoke(this, buffer);
 
                         DequeueItem();
                     }, camera, PriorityValue.Normal);
@@ -1393,12 +1406,11 @@ namespace EDSDKLib
         /// <param name="FilePath">Directory to where the final video will be saved to</param>
         public void StartFilming(string FilePath)
         {
-            if (!IsFilming)
-            {
-                StartFilming();
-                DownloadVideo = true;
-                ImageSaveDirectory = FilePath;
-            }
+            if (IsFilming) return;
+
+            StartFilming();
+            DownloadVideo = true;
+            ImageSaveDirectory = FilePath;
         }
 
         /// <summary>
@@ -1406,25 +1418,25 @@ namespace EDSDKLib
         /// </summary>
         public void StartFilming()
         {
-            if (!IsFilming)
+            if (IsFilming) return;
+            
+            //Check if the camera is ready to film
+            if (GetSetting((uint) PropertyId.Record) != 3)
+                throw new InvalidOperationException("Camera is not in film mode");
+
+            IsFilming = true;
+
+            //to restore the current setting after recording
+            PrevSaveTo = GetSetting((uint) PropertyId.SaveTo);
+            //when recording videos, it has to be saved on the camera internal memory
+            SetSetting((uint) PropertyId.SaveTo, (uint) SaveTo.Camera, MainCamera);
+            DownloadVideo = false;
+            //start the video recording
+            SendSDKCommand(cam =>
             {
-                //todo doesnt work
-                //Check if the camera is ready to film
-                //if (GetSetting(EDSDK.PropID_Record) != 3) throw new InvalidOperationException("Camera is not in film mode");
-
-                IsFilming = true;
-
-                //to restore the current setting after recording
-                PrevSaveTo = GetSetting((uint) PropertyId.SaveTo);
-                //when recording videos, it has to be saved on the camera internal memory
-                //SetSetting(EDSDK.PropID_SaveTo, (uint)SaveTo.Camera);
-                DownloadVideo = false;
-                //start the video recording
-                //SendSDKCommand(
-                //    () =>
-                //        _returnValueManager.HandleFunctionReturnValue(EdsdkInvokes.SetPropertyData(MainCamera.Ref,
-                //            EDSDK.PropID_Record, 0, 4, 4)));
-            }
+                _returnValueManager.HandleFunctionReturnValue(EdsdkInvokes.SetPropertyData(cam.Ref,
+                    (uint) PropertyId.Record, 0, 4, 4));
+            }, MainCamera);
         }
 
         /// <summary>
@@ -1432,21 +1444,21 @@ namespace EDSDKLib
         /// </summary>
         public void StopFilming()
         {
-            if (IsFilming)
+            if (!IsFilming) return;
+
+            SendSDKCommand(cam =>
             {
-                //todo doesnt work
-                SendSDKCommand(cam =>
-                {
-                    //Shut off live view (it will hang otherwise)
-                    StopLiveView(false);
-                    //stop video recording
-                    //_returnValueManager.HandleFunctionReturnValue(EdsdkInvokes.SetPropertyData(MainCamera.Ref, EDSDK.PropID_Record, 0, 4, 0));
-                }, MainCamera);
-                //set back to previous state
-                //This does not work at the moment, the SDK will hang for unknown reasons
-                //SetSetting(EDSDK.PropID_SaveTo, PrevSaveTo);
-                IsFilming = false;
-            }
+                //Shut off live view (it will hang otherwise)
+                StopLiveView(false);
+                //stop video recording
+                _returnValueManager.HandleFunctionReturnValue(EdsdkInvokes.SetPropertyData(cam.Ref,
+                    (uint) PropertyId.Record, 0, 4, 0));
+            }, MainCamera);
+            //set back to previous state
+            //This does not work at the moment, the SDK will hang for unknown reasons
+            SetSetting((uint) PropertyId.SaveTo, PrevSaveTo, MainCamera);
+            IsFilming = false;
+            //Dispatcher.CurrentDispatcher.Invoke(() => RaiseTransferEvent(ReturnValue.Ok));
         }
 
         #endregion
@@ -1553,14 +1565,14 @@ namespace EDSDKLib
         /// This method does not use the actual free space!
         /// </summary>
         public void SetCapacity(Camera camera)
-        {            
-            //create new capacity struct
-            var capacity = new Capacity();
-
-            //set big enough values
-            capacity.Reset = 1;
-            capacity.BytesPerSector = 0x1000;
-            capacity.NumberOfFreeClusters = 0x7FFFFFFF;
+        {
+            //create new capacity struct & set big enough values
+            var capacity = new Capacity
+            {
+                Reset = 1,
+                BytesPerSector = 0x1000,
+                NumberOfFreeClusters = 0x7FFFFFFF
+            };
 
             //set the values to camera
             SendSDKCommand(cam =>

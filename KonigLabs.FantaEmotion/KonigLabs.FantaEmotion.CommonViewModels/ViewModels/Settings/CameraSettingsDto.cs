@@ -4,7 +4,8 @@ namespace KonigLabs.FantaEmotion.CommonViewModels.ViewModels.Settings
 {
     public class CameraSettingsDto
     {
-        public AEMode SelectedAeMode { get; set; }
+        //NOT SUPPORTED on EOS 1100D
+        //public AEMode SelectedAeMode { get; set; }
 
         public ExposureCompensation SelectedCompensation { get; set; }
 

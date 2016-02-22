@@ -14,7 +14,8 @@ namespace KonigLabs.FantaEmotion.ViewModel.Providers
             {
                 settings = new CameraSettingsDto
                 {
-                    SelectedAeMode = AEMode.Manual,
+                    //NOT SUPPORTED on EOS 1100D
+                    //SelectedAeMode = AEMode.Manual,
                     SelectedAvValue = ApertureValue.AV_8,
                     SelectedIsoSensitivity = CameraISOSensitivity.ISO_400,
                     SelectedWhiteBalance = WhiteBalance.Daylight,

@@ -1,21 +1,22 @@
-﻿<UserControl x:Class="KonigLabs.FantaEmotion.View.Controls.WelcomCtl"
+﻿<UserControl x:Class="KonigLabs.FantaEmotion.View.Controls.TakeVideoResultCtl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:KonigLabs.FantaEmotion.View.Controls"
+             xmlns:converts="clr-namespace:KonigLabs.FantaEmotion.View.Convertrs"
              xmlns:viewModels="clr-namespace:KonigLabs.FantaEmotion.ViewModel.ViewModels;assembly=KonigLabs.FantaEmotion.ViewModel"
              mc:Ignorable="d"
-             d:DataContext="{d:DesignInstance viewModels:WelcomViewModel}"
-             Width="1080" Height="900">
+             d:DataContext="{d:DesignInstance viewModels:TakeVideoResultViewModel}">
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Image Source="pack://Application:,,,/Resources/logo.png"/>
-        <Label HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1">CALL-TO-ACTION</Label>
-        <Button Grid.Row="2" Command="{Binding Path=StartCommand}">Старт</Button>
+        <MediaElement Source="{Binding Path=VideoPath}"  Width="768" Height="512" Stretch="Uniform" />
+        <Button Grid.Row="1" Command="{Binding RepeatCommand}">Еще раз</Button>
+        <Button Grid.Row="2" Command="{Binding NextCommnad}">Продолжить</Button>
     </Grid>
 </UserControl>

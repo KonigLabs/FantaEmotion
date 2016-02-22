@@ -11,4 +11,7 @@
     <DataTemplate DataType="{x:Type viewModels:TakePhotoResultViewModel}">
         <controls:TakePhotoResultCtl/>
     </DataTemplate>
+    <DataTemplate DataType="{x:Type viewModels:TakeVideoResultViewModel}">
+        <controls:TakeVideoResultCtl/>
+    </DataTemplate>
 </ResourceDictionary>

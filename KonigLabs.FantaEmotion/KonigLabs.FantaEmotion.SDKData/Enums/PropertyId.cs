@@ -105,6 +105,9 @@
         LiveViewCoordinateSystem = 0x00000540,
         LiveViewZoomRectangle = 0x00000541,
 
+        // Record video Properties
+        Record = 0x00000510,
+
         // Image GPS Properties
         GPSVersionID = 0x00000800,
         GPSLatitudeRef = 0x00000801,

@@ -5,8 +5,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:KonigLabs.FantaEmotion.View.Controls"
              xmlns:converts="clr-namespace:KonigLabs.FantaEmotion.View.Convertrs"
-             mc:Ignorable="d" >
-    
+             xmlns:viewModels="clr-namespace:KonigLabs.FantaEmotion.ViewModel.ViewModels;assembly=KonigLabs.FantaEmotion.ViewModel"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance viewModels:TakePhotoResultViewModel}">
+
     <UserControl.Resources>
         <converts:ByteArrayToImageSourceConverter x:Key="ByteArrayToImageSourceConverter"/>
     </UserControl.Resources>
@@ -17,8 +19,8 @@
             <RowDefinition/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <Image Source="{Binding Photo, Converter={StaticResource ByteArrayToImageSourceConverter}}"  Width="768" Height="512" Stretch="Fill" />
-        <Button Grid.Row="1" Command="{Binding RepeatCommand}">Еще раз</Button>
-        <Button Grid.Row="2" Command="{Binding NextCommnad}">Продолжить</Button>
+        <Image Source="{Binding Path=Photo, Converter={StaticResource ByteArrayToImageSourceConverter}}"  Width="768" Height="512" Stretch="Uniform"/>
+        <Button Grid.Row="1" Command="{Binding Path=RepeatCommand}">Еще раз</Button>
+        <Button Grid.Row="2" Command="{Binding Path=NextCommnad}">Продолжить</Button>
     </Grid>
 </UserControl>

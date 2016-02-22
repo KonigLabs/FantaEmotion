@@ -93,6 +93,7 @@
     <Compile Include="Enums\WhiteBalance.cs" />
     <Compile Include="Events\CameraEventBase.cs" />
     <Compile Include="Events\CameraEventType.cs" />
+    <Compile Include="Events\TransferCompleteEvent.cs" />
     <Compile Include="Events\ErrorEvent.cs" />
     <Compile Include="Events\ShutdownEvent.cs" />
     <Compile Include="Miscellaneous\GlobalConstants.cs" />
