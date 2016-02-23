@@ -1,0 +1,49 @@
+﻿<Window x:Class="VideoCollage.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:VideoCollage" ResizeMode="NoResize"
+        mc:Ignorable="d"
+        Title="MainWindow" WindowStyle="None" SizeToContent="WidthAndHeight">
+
+    <Grid Width="850" Height="488">
+        <Grid.Background>
+            <ImageBrush ImageSource="Resources/bg.png">
+            </ImageBrush>
+        </Grid.Background>
+        <Grid x:Name="Root">
+            <Grid.Resources>
+                <Style TargetType="{x:Type MediaElement}">
+                    <Setter Property="Margin" Value="5"></Setter>
+                </Style>
+            </Grid.Resources>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <MediaElement x:Name="Media1" MediaEnded="OnEndedPlay" LoadedBehavior="Play" UnloadedBehavior="Manual" IsMuted="True"/>
+            <MediaElement x:Name="Media2" MediaEnded="OnEndedPlay" LoadedBehavior="Play" UnloadedBehavior="Manual" Grid.Column="1" IsMuted="True"/>
+            <MediaElement x:Name="Media3" MediaEnded="OnEndedPlay" LoadedBehavior="Play" UnloadedBehavior="Manual" Grid.Column="2" IsMuted="True"/>
+            <MediaElement x:Name="Media4" MediaEnded="OnEndedPlay" LoadedBehavior="Play" UnloadedBehavior="Manual" Grid.Column="3" IsMuted="True"/>
+            <MediaElement x:Name="Media5" MediaEnded="OnEndedPlay" LoadedBehavior="Play" UnloadedBehavior="Manual" Grid.Row="1" IsMuted="True"/>
+            <MediaElement x:Name="Media6" MediaEnded="OnEndedPlay" LoadedBehavior="Play" UnloadedBehavior="Manual" Grid.Row="1" Grid.Column="1" IsMuted="True"/>
+            <MediaElement x:Name="Media7" MediaEnded="OnEndedPlay" LoadedBehavior="Play" UnloadedBehavior="Manual" Grid.Row="1" Grid.Column="2"  IsMuted="True"/>
+            <MediaElement x:Name="Media8" MediaEnded="OnEndedPlay" LoadedBehavior="Play" UnloadedBehavior="Manual" Grid.Row="1" Grid.Column="3" IsMuted="True"/>
+            <MediaElement x:Name="Media9" MediaEnded="OnEndedPlay" LoadedBehavior="Play" UnloadedBehavior="Manual" Grid.Row="2" IsMuted="True"/>
+            <MediaElement x:Name="Media10" MediaEnded="OnEndedPlay" LoadedBehavior="Play" UnloadedBehavior="Manual" Grid.Row="2" Grid.Column="1" IsMuted="True"/>
+            <MediaElement x:Name="Media11" MediaEnded="OnEndedPlay" LoadedBehavior="Play" UnloadedBehavior="Manual" Grid.Row="2" Grid.Column="2" IsMuted="True"/>
+            <MediaElement x:Name="Media12" MediaEnded="OnEndedPlay" LoadedBehavior="Play" UnloadedBehavior="Manual" Grid.Row="2" Grid.Column="3" IsMuted="True"/>
+        </Grid>
+        <Border x:Name="FullBorder" Width="1" Height="1" BorderThickness="2" HorizontalAlignment="Left" VerticalAlignment="Top">
+            <MediaElement x:Name="FullMedia" IsMuted="True" Stretch="UniformToFill"/>
+        </Border>
+    </Grid>
+</Window>
