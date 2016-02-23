@@ -8,7 +8,6 @@ using GalaSoft.MvvmLight.Command;
 using KonigLabs.FantaEmotion.CommonViewModels.Async;
 using KonigLabs.FantaEmotion.CommonViewModels.ViewModels;
 using KonigLabs.FantaEmotion.CommonViewModels.ViewModels.Navigation;
-using KonigLabs.FantaEmotion.PatternProcessing;
 using KonigLabs.FantaEmotion.PatternProcessing.Dto;
 using KonigLabs.FantaEmotion.PatternProcessing.ImageProcessors;
 using KonigLabs.FantaEmotion.SDKData.Enums;
@@ -25,10 +24,10 @@ namespace KonigLabs.FantaEmotion.ViewModel.ViewModels
         private const int CDefHeight = 1536;
 
         private CameraSettingsDto _settings;
-        private SettingsProvider _settingsProvider;
+        private readonly SettingsProvider _settingsProvider;
         //private readonly IDialogService _dialogService;
-        private IViewModelNavigator _navigator;
-        private CompositionModelProcessor _imageProcessor;
+        private readonly IViewModelNavigator _navigator;
+        private readonly CompositionModelProcessor _imageProcessor;
         private int _width;
         private int _height;
         private int _imageNumber;
@@ -38,14 +37,12 @@ namespace KonigLabs.FantaEmotion.ViewModel.ViewModels
         private RelayCommand _closeSessionCommand;
         private RelayCommand _refreshCameraCommand;
         private RelayCommand _startLiveViewCommand;
-        private IAsyncCommand _takePictureCommand;
         private IAsyncCommand _takeVideoCommand;
         private RelayCommand<uint> _setFocusCommand;
 
         private byte[] _liveViewImageStream;
 
         private bool _sessionOpened;
-        private bool _takingPicture;
         private bool _isLiveViewOn;
         private int _counter;
 
@@ -82,13 +79,11 @@ namespace KonigLabs.FantaEmotion.ViewModel.ViewModels
 
             if (_settings != null)
             {
-                //NOT SUPPORTED on EOS 1100D
-                //_imageProcessor.SetSetting((uint)PropertyId.AEMode, (uint)_settings.SelectedAeMode);
-                _imageProcessor.SetSetting((uint) PropertyId.WhiteBalance, (uint) _settings.SelectedWhiteBalance);
-                _imageProcessor.SetSetting((uint) PropertyId.Av, (uint) _settings.SelectedAvValue);
-                _imageProcessor.SetSetting((uint) PropertyId.ExposureCompensation, (uint) _settings.SelectedCompensation);
-                _imageProcessor.SetSetting((uint) PropertyId.ISOSpeed, (uint) _settings.SelectedIsoSensitivity);
-                _imageProcessor.SetSetting((uint) PropertyId.Tv, (uint) _settings.SelectedShutterSpeed);
+                _imageProcessor.SetSetting((uint)PropertyId.WhiteBalance, (uint)_settings.SelectedWhiteBalance);
+                _imageProcessor.SetSetting((uint)PropertyId.Av, (uint)_settings.SelectedAvValue);
+                _imageProcessor.SetSetting((uint)PropertyId.ExposureCompensation, (uint)_settings.SelectedCompensation);
+                _imageProcessor.SetSetting((uint)PropertyId.ISOSpeed, (uint)_settings.SelectedIsoSensitivity);
+                _imageProcessor.SetSetting((uint)PropertyId.Tv, (uint)_settings.SelectedShutterSpeed);
             }
             _cameraStreamSynchronize = new AutoResetEvent(false);
             StartLiveView();
@@ -101,15 +96,15 @@ namespace KonigLabs.FantaEmotion.ViewModel.ViewModels
 
         public override void Dispose()
         {
-            _imageProcessor.TimerElapsed -= ImageProcessorOnTimerElapsed;
-            _imageProcessor.CameraErrorEvent -= ImageProcessorOnCameraErrorEvent;
-            _imageProcessor.ImageChanged -= ImageProcessorOnStreamChanged;
-            _imageProcessor.ImageNumberChanged -= ImageProcessorOnImageNumberChanged;
+            //_imageProcessor.TimerElapsed -= ImageProcessorOnTimerElapsed;
+            //_imageProcessor.CameraErrorEvent -= ImageProcessorOnCameraErrorEvent;
+            //_imageProcessor.ImageChanged -= ImageProcessorOnStreamChanged;
+            //_imageProcessor.ImageNumberChanged -= ImageProcessorOnImageNumberChanged;
 
-            _sessionOpened = false;
-            TakingPicture = false;
-            _isLiveViewOn = false;
-            _imageProcessor.Dispose();
+            //_sessionOpened = false;
+            //// TakingPicture = false;
+            //_isLiveViewOn = false;
+            //_imageProcessor.Dispose();
         }
 
         private void ImageProcessorOnTimerElapsed(object sender, int tick)
@@ -122,12 +117,12 @@ namespace KonigLabs.FantaEmotion.ViewModel.ViewModels
             switch (cameraErrorInfo.EventType)
             {
                 case CameraEventType.Shutdown:
-                    TakingPicture = false;
+                    //TakingPicture = false;
                     //_dialogService.ShowInfo(cameraErrorInfo.Message);
                     Dispose();
                     break;
                 case CameraEventType.Error:
-                    TakingPicture = false;
+                    //TakingPicture = false;
 
                     var ev = cameraErrorInfo as ErrorEvent;
                     if (ev != null && ev.ErrorCode == ReturnValue.TakePictureAutoFocusNG)
@@ -136,6 +131,8 @@ namespace KonigLabs.FantaEmotion.ViewModel.ViewModels
                         Dispose();
                         Initialize();
                     }
+                    if (ev != null && ev.ErrorCode == ReturnValue.NotSupported)
+                        return;
                     break;
             }
         }
@@ -149,28 +146,13 @@ namespace KonigLabs.FantaEmotion.ViewModel.ViewModels
                 _cameraStreamSynchronize.Set();
         }
 
-        private async Task<byte[]> TakePicture(CancellationToken token)
+        private async Task<string> RecordVideo(CancellationToken cancellationToken)
         {
-            return await Task.Run(() =>
-            {
-                TakingPicture = true;
-
-                token.ThrowIfCancellationRequested();
-                _cameraStreamSynchronize.WaitOne();
-                token.ThrowIfCancellationRequested();
-                TakingPicture = false;
-                var result = LiveViewImageStream.ToArray();
-                _navigator.NavigateForward<TakePhotoResultViewModel>(this, result);
-                return result;
-            }, token);
-        }
-
-        private async Task<string> RecordVideo()
-        {
+            IsRecordingVideo = true;
             for (var i = 3; i >= 0; --i)
             {
                 Counter = i;
-                await Task.Delay(TimeSpan.FromSeconds(1));
+                await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
             }
 
             return await Task.Run(async () =>
@@ -178,19 +160,20 @@ namespace KonigLabs.FantaEmotion.ViewModel.ViewModels
                 _imageProcessor.StartRecordVideo();
 
                 //записываем видео продолжительностью 5 секунд
-                await Task.Delay(TimeSpan.FromSeconds(5));
+                await Task.Delay(TimeSpan.FromSeconds(5), cancellationToken);
 
                 var newVideoPath = await _imageProcessor.StopRecordVideo();
 
                 //todo временно. сделать по event'у (TransferCompleteEvent лежит в SDKData)
-                await Task.Delay(TimeSpan.FromSeconds(6));
+                await Task.Delay(TimeSpan.FromSeconds(6), cancellationToken);
                 //todo убрать. есть в _imageProcessor.StopRecordVideo()
                 var info = _imageProcessor.GetVideoDirectory();
                 var lastVideo = info.EnumerateFiles("MVI*.mov").OrderByDescending(p => p.CreationTimeUtc).FirstOrDefault();
 
                 _navigator.NavigateForward<TakeVideoResultViewModel>(this, /*newVideoPath*/lastVideo.FullName);
-                return newVideoPath;
-            });
+                IsRecordingVideo = false;
+                 return newVideoPath;
+            }, cancellationToken);
         }
 
         private bool _isRecordingVideo;
@@ -199,13 +182,12 @@ namespace KonigLabs.FantaEmotion.ViewModel.ViewModels
         {
             get
             {
-                var tmp = _imageProcessor.IsRecordingVideo();
-                if (_isRecordingVideo != tmp)
-                {
-                    _isRecordingVideo = tmp;
-                    RaisePropertyChanged();
-                }
                 return _isRecordingVideo;
+            }
+            set
+            {
+                _isRecordingVideo = value;
+                Set(() => IsRecordingVideo, ref _isRecordingVideo, value);
             }
         }
 
@@ -243,9 +225,9 @@ namespace KonigLabs.FantaEmotion.ViewModel.ViewModels
         {
             _cameraStreamSynchronize.Do(x => x.Set());
 
-            var takePictireCmd = ((AsyncCommand<Task<CompositionProcessingResult>>) TakePictureCommand);
-            if (takePictireCmd.CancelCommand.CanExecute(null))
-                takePictireCmd.CancelCommand.Execute(null);
+            //var takePictireCmd = ((AsyncCommand<Task<CompositionProcessingResult>>) TakePictureCommand);
+            //if (takePictireCmd.CancelCommand.CanExecute(null))
+            //    takePictireCmd.CancelCommand.Execute(null);
             _navigator.NavigateBack(this);
         }
 
@@ -257,24 +239,24 @@ namespace KonigLabs.FantaEmotion.ViewModel.ViewModels
         }
 
 
-        public bool TakingPicture
-        {
-            get { return _takingPicture; }
-            set
-            {
-                if (_takingPicture == value)
-                    return;
+        //public bool TakingPicture
+        //{
+        //    get { return _takingPicture; }
+        //    set
+        //    {
+        //        if (_takingPicture == value)
+        //            return;
 
-                _takingPicture = value;
-                RaisePropertyChanged();
-                RaisePropertyChanged(() => NotTakingPicture);
-            }
-        }
+        //        _takingPicture = value;
+        //        RaisePropertyChanged();
+        //        RaisePropertyChanged(() => NotTakingPicture);
+        //    }
+        //}
 
-        public bool NotTakingPicture
-        {
-            get { return !TakingPicture; }
-        }
+        //public bool NotTakingPicture
+        //{
+        //    get { return !TakingPicture; }
+        //}
 
         public int Width
         {
@@ -304,16 +286,16 @@ namespace KonigLabs.FantaEmotion.ViewModel.ViewModels
             }
         }
 
-        public IAsyncCommand TakePictureCommand
-        {
-            get
-            {
-                return _takePictureCommand ??
-                       (_takePictureCommand =
-                           AsyncCommand.Create<Task<CompositionProcessingResult>>(t => TakePicture(t),
-                               () => _sessionOpened && !TakingPicture && !IsRecordingVideo));
-            }
-        }
+        //public IAsyncCommand TakePictureCommand
+        //{
+        //    get
+        //    {
+        //        return _takePictureCommand ??
+        //               (_takePictureCommand =
+        //                   AsyncCommand.Create<Task<CompositionProcessingResult>>(t => TakePicture(t),
+        //                       () => _sessionOpened && !TakingPicture && !IsRecordingVideo));
+        //    }
+        //}
 
         public IAsyncCommand TakeVideoCommand
         {
@@ -321,7 +303,7 @@ namespace KonigLabs.FantaEmotion.ViewModel.ViewModels
             {
                 return _takeVideoCommand ??
                        (_takeVideoCommand =
-                           AsyncCommand.Create(RecordVideo, () => !IsRecordingVideo && !TakingPicture));
+                           AsyncCommand.Create(RecordVideo, () => !IsRecordingVideo));
             }
         }
 
@@ -334,28 +316,19 @@ namespace KonigLabs.FantaEmotion.ViewModel.ViewModels
         private IList<uint> _focusPoints;
 
 
-        public IList<uint> FocusPoints
-        {
-            get
-            {
-                return _focusPoints ??
-                       (_focusPoints = Enum.GetValues(typeof (LiveViewDriveLens)).OfType<uint>().ToList());
-            }
-        }
+        public IList<uint> FocusPoints => _focusPoints ??
+                                          (_focusPoints = Enum.GetValues(typeof(LiveViewDriveLens)).OfType<uint>().ToList());
 
         public RelayCommand<uint> SetFocusCommand
         {
             get
             {
                 return _setFocusCommand ?? (_setFocusCommand = new RelayCommand<uint>(SetFocus,
-                    x => _sessionOpened && !TakingPicture && _isLiveViewOn));
+                    x => _sessionOpened && _isLiveViewOn));
             }
         }
 
-        public RelayCommand GoBackCommand
-        {
-            get { return _goBackCommand ?? (_goBackCommand = new RelayCommand(GoBack)); }
-        }
+        public RelayCommand GoBackCommand => _goBackCommand ?? (_goBackCommand = new RelayCommand(GoBack));
 
         public RelayCommand OpenSessionCommand
         {
@@ -368,7 +341,7 @@ namespace KonigLabs.FantaEmotion.ViewModel.ViewModels
             get
             {
                 return _closeSessionCommand ??
-                       (_closeSessionCommand = new RelayCommand(CloseSession, () => _sessionOpened && !TakingPicture));
+                       (_closeSessionCommand = new RelayCommand(CloseSession, () => _sessionOpened));
             }
         }
 
@@ -377,7 +350,7 @@ namespace KonigLabs.FantaEmotion.ViewModel.ViewModels
             get
             {
                 return _refreshCameraCommand ??
-                       (_refreshCameraCommand = new RelayCommand(RefreshCamera, () => _sessionOpened && !TakingPicture));
+                       (_refreshCameraCommand = new RelayCommand(RefreshCamera, () => _sessionOpened));
             }
         }
 
@@ -386,7 +359,7 @@ namespace KonigLabs.FantaEmotion.ViewModel.ViewModels
             get
             {
                 return _startLiveViewCommand ??
-                       (_startLiveViewCommand = new RelayCommand(StartLiveView, () => _sessionOpened && !TakingPicture));
+                       (_startLiveViewCommand = new RelayCommand(StartLiveView, () => _sessionOpened));
             }
         }
 

@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:KonigLabs.FantaEmotion.View"
         mc:Ignorable="d"
         Content="{Binding Path=CurrentContent}"
-        Title="MainWindow" WindowState="Maximized"
+        Title="MainWindow"
         Width="600" Height="1080">
         <!--WindowStyle="None"
         Background="Transparent">-->
