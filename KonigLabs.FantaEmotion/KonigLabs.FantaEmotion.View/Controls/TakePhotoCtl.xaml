@@ -16,12 +16,13 @@
         <Grid.Resources>
             <converters:ByteArrayToImageSourceConverter x:Key="ByteArrayToImageSourceConverter"/>
         </Grid.Resources>
-        <Image Source="{Binding Path=LiveViewImageStream, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ByteArrayToImageSourceConverter}}" Stretch="Uniform" Height="900">
+        <TextBlock HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="900" Foreground="White" Background="Black" FontSize="70">NO CAMERA</TextBlock>
+        <Image Source="{Binding Path=LiveViewImageStream, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ByteArrayToImageSourceConverter}}" Visibility="{Binding VisiblePreview}" Stretch="Uniform" Height="900">
             <Image.LayoutTransform>
                 <RotateTransform Angle="90"/>
             </Image.LayoutTransform>
         </Image>
-        <Button Command="{Binding TakeVideoCommand}" Opacity="0.5" Width="150" Height="50" Margin="0,100,0,0">Take video</Button>
+        <Button Command="{Binding TakeVideoCommand}" Opacity="0.5" MinWidth="350" MinHeight="50" Margin="0,100,0,0" Content="{Binding LabelTakeVideo}"/>
 
         <Grid>
             <Grid.RowDefinitions>

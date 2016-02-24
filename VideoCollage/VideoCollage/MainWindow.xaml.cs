@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
+using System.Xml.Serialization;
 
 namespace VideoCollage
 {
@@ -24,6 +25,7 @@ namespace VideoCollage
         private int _lastSelectIndex = 0;
         private int _currentFull = 0;
         private Thickness _previewPosition;
+        private DispatcherTimer _fullTimer;
         /// <summary>
         /// Генерация списка видео
         /// </summary>
@@ -62,6 +64,7 @@ namespace VideoCollage
 
         private void ToFull()
         {
+            _fullTimer.Interval = TimeSpan.FromSeconds(7);
             //анимация отъезда назад
             var widthAnimation = new DoubleAnimation
             {
@@ -138,6 +141,13 @@ namespace VideoCollage
 
         public MainWindow()
         {
+            if (File.Exists("path.txt"))
+            {
+                using (var f = File.OpenText("path.txt"))
+                {
+                    _videoPath = f.ReadLine();
+                }
+            }
             
             InitializeComponent();
             //список элементов видое
@@ -162,10 +172,10 @@ namespace VideoCollage
             timer.Start();
             //показать большой элемент
             
-            var fullTimer = new DispatcherTimer();
-            fullTimer.Interval = TimeSpan.FromSeconds(7);
-            fullTimer.Tick += (s, e) => ToFull();
-            fullTimer.Start();
+            _fullTimer = new DispatcherTimer();
+            _fullTimer.Interval = TimeSpan.FromSeconds(1);
+            _fullTimer.Tick += (s, e) => ToFull();
+            _fullTimer.Start();
             CollageGenerate();
         }
 

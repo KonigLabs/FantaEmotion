@@ -25,6 +25,8 @@ namespace KonigLabs.FantaEmotion.PatternProcessing.ImageProcessors
         public event EventHandler<int> TimerElapsed;
         public event EventHandler<int> ImageNumberChanged;
         public event EventHandler<CameraEventBase> CameraErrorEvent;
+        public event EventHandler CameraRemoveEvent;
+        public event EventHandler CameraAddEvent;
 
         public CompositionModelProcessor(Template pattern, ImageProcessor imageProcessor, ImageUtils imageUtils)
         {
@@ -42,8 +44,25 @@ namespace KonigLabs.FantaEmotion.PatternProcessing.ImageProcessors
 
             _imageProcessor.Initialize();
             _imageProcessor.CameraErrorEvent += ImageProcessorOnCameraErrorEvent;
-
+            _imageProcessor.AddCamera += OnAddCamera;
+            _imageProcessor.RemoveCamera += OnRemoveCamera;
             _initialized = true;
+        }
+
+        private void OnRemoveCamera(object sender, EventArgs e)
+        {
+            if (CameraRemoveEvent != null)
+            {
+                CameraRemoveEvent(sender, e);
+            }
+        }
+
+        private void OnAddCamera(object sender, EventArgs e)
+        {
+            if (CameraAddEvent != null)
+            {
+                CameraAddEvent(sender, e);
+            }
         }
 
         private void ImageProcessorOnCameraErrorEvent(object sender, CameraEventBase cameraError)
@@ -242,6 +261,8 @@ namespace KonigLabs.FantaEmotion.PatternProcessing.ImageProcessors
         public virtual void CloseSession()
         {
             _imageProcessor.CloseSession();
+            _initialized = false;
+            _imageProcessor.CameraErrorEvent -= ImageProcessorOnCameraErrorEvent;
         }
 
         public virtual bool OpenSession()

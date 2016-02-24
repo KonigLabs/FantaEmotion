@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
@@ -82,7 +83,13 @@ namespace KonigLabs.FantaEmotion.CommonViewModels.Async
             mCancelCommand.NotifyCommandFinished();
             RaiseCanExecuteChanged();
         }
-
+        public override AggregateException Exceptions
+        {
+            get
+            {
+                return Execution.Exception;
+            }
+        }
         #endregion
 
         #region INotifyPropertyChanged

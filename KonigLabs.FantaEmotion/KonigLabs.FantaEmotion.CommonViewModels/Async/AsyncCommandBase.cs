@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -6,6 +7,14 @@ namespace KonigLabs.FantaEmotion.CommonViewModels.Async
 {
     public abstract class AsyncCommandBase : IAsyncCommand
     {
+        public virtual AggregateException Exceptions
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         public abstract bool CanExecute(object parameter);
 
         public abstract Task ExecuteAsync(object parameter);

@@ -13,7 +13,8 @@ namespace KonigLabs.FantaEmotion.Camera
     public class ImageProcessor : IDisposable
     {
         public event EventHandler<byte[]> StreamChanged;
-
+        public event EventHandler AddCamera;
+        public event EventHandler RemoveCamera;
         protected SDKHandler CameraHandler;
 
         public event EventHandler<CameraEventBase> CameraErrorEvent;
@@ -24,7 +25,6 @@ namespace KonigLabs.FantaEmotion.Camera
         public ImageProcessor()
         {
             Cameras = new ObservableCollection<EDSDKLib.Camera>();
-
             CameraHandler = new SDKHandler();
         }
 
@@ -49,7 +49,6 @@ namespace KonigLabs.FantaEmotion.Camera
             CameraHandler.CameraAdded += SDK_CameraAdded;
             CameraHandler.LiveViewUpdated += SDK_LiveViewUpdated;
             CameraHandler.ProgressChanged += SDK_ProgressChanged;
-
             CameraHandler.CameraHasShutdown += SDK_CameraHasShutdown;
             RefreshCamera();
             IsInit = true;
@@ -139,14 +138,18 @@ namespace KonigLabs.FantaEmotion.Camera
         private void SDK_CameraAdded()
         {
             RefreshCamera();
+            if (AddCamera != null)
+                AddCamera(this, new EventArgs());
         }
 
         private void SDK_CameraHasShutdown(object sender, EventArgs e)
         {
-            Terminate();
+            //Terminate();
             CameraHandler.ShutDown();
-
             OnShutdownEvent();
+            RefreshCamera();
+            if (RemoveCamera != null)
+                RemoveCamera(this, new EventArgs());
         }
 
         #endregion
@@ -158,7 +161,7 @@ namespace KonigLabs.FantaEmotion.Camera
             if (!CameraHandler.CameraSessionOpen)
                 return OpenSession();
 
-            CloseSession();
+            //CloseSession();
             return true;
         }
 
@@ -234,9 +237,6 @@ namespace KonigLabs.FantaEmotion.Camera
             }
 
             SelectedCamera = Cameras.FirstOrDefault();
-
-            if (SelectedCamera == null)
-                throw new Exception("Камера не найдена");
         }
 
         private bool OpenSession()
