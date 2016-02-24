@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -159,7 +160,16 @@ namespace KonigLabs.FantaEmotion.PatternProcessing.ImageProcessors
 
             var info = GetVideoDirectory();
             var lastVideo = info.EnumerateFiles("MVI*.mov").OrderByDescending(p => p.CreationTimeUtc).FirstOrDefault();
-            return lastVideo?.FullName;
+
+            var resultVideo = lastVideo?.FullName;
+            if (lastVideo != null)
+            {
+                Process.Start("ffmpeg.exe",
+                    $"-i \"{info.FullName}\\{lastVideo.Name}\" -vf scale=400x226 \"{info.FullName}\\Min{lastVideo.Name}\"");
+                resultVideo = resultVideo.Replace(lastVideo.Name, "Min" + lastVideo.Name);
+            }
+
+            return resultVideo;
         }
 
         public bool IsRecordingVideo()

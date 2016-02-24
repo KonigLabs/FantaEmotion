@@ -92,7 +92,14 @@
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Utilities\ffmpeg.exe" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>xcopy "$(SolutionDir).\KonigLabs.FantaEmotion.PatternProcessing\Utilities\ffmpeg.exe" "$(SolutionDir)KonigLabs.FantaEmotion.View\bin\Debug\" /Y /I
+xcopy "$(SolutionDir).\KonigLabs.FantaEmotion.PatternProcessing\Utilities\ffmpeg.exe" "$(SolutionDir)KonigLabs.FantaEmotion.View\bin\Release\" /Y /I</PreBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
