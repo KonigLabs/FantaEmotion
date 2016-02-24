@@ -1288,7 +1288,6 @@ namespace EDSDKLib
                             DequeueItem();
                             return;
                         }
-
                         var buffer = GetLiveViewImage(cam);
                         LiveViewUpdated?.Invoke(this, buffer);
 

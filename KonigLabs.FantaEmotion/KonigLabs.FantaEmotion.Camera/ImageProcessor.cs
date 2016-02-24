@@ -68,7 +68,7 @@ namespace KonigLabs.FantaEmotion.Camera
             return true;
         }
 
-        public async Task<bool> StopRecordVideo()
+        public bool StopRecordVideo()
         {
             if (!IsFilming())
                 return false;

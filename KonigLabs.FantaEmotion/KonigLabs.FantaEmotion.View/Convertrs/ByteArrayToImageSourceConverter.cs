@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Windows.Data;
@@ -8,6 +9,7 @@ namespace KonigLabs.FantaEmotion.View.Convertrs
 {
     public class ByteArrayToImageSourceConverter : IValueConverter
     {
+        public static int Count = 0;
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var imgBytes = value as byte[];

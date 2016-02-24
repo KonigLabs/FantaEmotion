@@ -150,16 +150,15 @@ namespace KonigLabs.FantaEmotion.PatternProcessing.ImageProcessors
             _imageProcessor.StartRecordVideo(GetVideoDirectory().FullName);
         }
 
-        public async Task<string> StopRecordVideo()
+        public string StopRecordVideo(bool force = false)
         {
-            var result = await _imageProcessor.StopRecordVideo();
+            var result = _imageProcessor.StopRecordVideo();
 
-            if (!result)
+            if (!result || force)
                 return null;
 
             var info = GetVideoDirectory();
             var lastVideo = info.EnumerateFiles("MVI*.mov").OrderByDescending(p => p.CreationTimeUtc).FirstOrDefault();
-
             return lastVideo?.FullName;
         }
 

@@ -15,6 +15,10 @@ using KonigLabs.FantaEmotion.SDKData.Events;
 using KonigLabs.FantaEmotion.ViewModel.Providers;
 using KonigLabs.FantaEmotion.ViewModel.Settings;
 using System.Windows;
+using System.Diagnostics;
+using System.Windows.Threading;
+using System.Drawing;
+using System.IO;
 
 namespace KonigLabs.FantaEmotion.ViewModel.ViewModels
 {
@@ -38,7 +42,7 @@ namespace KonigLabs.FantaEmotion.ViewModel.ViewModels
         private RelayCommand _closeSessionCommand;
         private RelayCommand _refreshCameraCommand;
         private RelayCommand _startLiveViewCommand;
-        private IAsyncCommand _takeVideoCommand;
+        private RelayCommand _takeVideoCommand;
         private RelayCommand<uint> _setFocusCommand;
 
         private string _labelTakeVideo = "Take Video";
@@ -149,55 +153,82 @@ namespace KonigLabs.FantaEmotion.ViewModel.ViewModels
                     break;
             }
         }
-
+        List<byte[]> images = new List<byte[]>();
         private void ImageProcessorOnStreamChanged(object sender, ImageDto image)
         {
             Width = image.Width;
             Height = image.Height;
             LiveViewImageStream = image.ImageData;
+            if (IsRecordingVideo)
+            {
+                images.Add(image.ImageData);
+            }
             if (LiveViewImageStream.Length > 0)
                 _cameraStreamSynchronize.Set();
         }
+        DispatcherTimer _timerStop = new DispatcherTimer();
+        DispatcherTimer _timerAwaitRecord = new DispatcherTimer();
+        private void StopRecord(object s, EventArgs e)
+        {
+            _timerStop.Stop();
+            _timerAwaitRecord.Tick += GetLastFile;
+            _timerAwaitRecord.Interval = TimeSpan.FromSeconds(6);
+            _timerAwaitRecord.Start();
+            _imageProcessor.StopRecordVideo();
+            /*Task.Run(() =>
+            {
+                Gif.Components.AnimatedGifEncoder encoder = new Gif.Components.AnimatedGifEncoder();
+                encoder.SetDelay(100);
+                encoder.SetRepeat(0);
+                encoder.Start(Path.Combine(_imageProcessor.GetVideoDirectory().FullName, DateTime.Now.Millisecond + ".gif"));
+                foreach (var img in images)
+                {
+                    using (var st = new MemoryStream(img))
+                    {
+                        encoder.AddFrame(Image.FromStream(st));
+                    }
+                }
+                encoder.Finish();
+            });*/
+            
+            
+        }
 
-        private async Task<string> RecordVideo(CancellationToken cancellationToken)
+        private void GetLastFile(object s, EventArgs e)
+        {
+            _timerAwaitRecord.Stop();
+            var info = _imageProcessor.GetVideoDirectory();
+            var lastVideo = info.EnumerateFiles("MVI*.mov").OrderByDescending(p => p.CreationTimeUtc).FirstOrDefault();
+            _navigator.NavigateForward<TakeVideoResultViewModel>(this, lastVideo.FullName);
+            IsRecordingVideo = false;
+        }
+        private async void RecordVideo()
         {
             IsRecordingVideo = true;
             for (var i = 3; i >= 0; --i)
             {
                 Counter = i;
-                await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
+                await Task.Delay(TimeSpan.FromSeconds(1));
             }
-
-            var result = await Task.Run(async () =>
+            try
             {
-                try
-                {
-                    _imageProcessor.StartRecordVideo();
+                _imageProcessor.StartRecordVideo();
+                //записываем видео продолжительностью 5 секунд
+                _timerStop.Interval = TimeSpan.FromSeconds(5);
+                _timerStop.Tick += StopRecord;
 
-                    //записываем видео продолжительностью 5 секунд
-                    await Task.Delay(TimeSpan.FromSeconds(5), cancellationToken);
-                    var newVideoPath = await _imageProcessor.StopRecordVideo();
-                    //todo временно. сделать по event'у (TransferCompleteEvent лежит в SDKData)
-                    await Task.Delay(TimeSpan.FromSeconds(6), cancellationToken);
-                    //todo убрать. есть в _imageProcessor.StopRecordVideo()
-                    var info = _imageProcessor.GetVideoDirectory();
-                    var lastVideo = info.EnumerateFiles("MVI*.mov").OrderByDescending(p => p.CreationTimeUtc).FirstOrDefault();
-
-                    _navigator.NavigateForward<TakeVideoResultViewModel>(this, /*newVideoPath*/lastVideo.FullName);
-                    IsRecordingVideo = false;
-                    return newVideoPath;
-                }
-                catch {
-                    CloseSession();
-                    OpenSession();
-                    StartLiveView();
-                    IsRecordingVideo = false;
-                    TakeVideoCommand.CanExecute(null);
-                    LabelTakeVideo = "Oops, an error please try again";
-                    return string.Empty;
-                }
-            }, cancellationToken);
-            return result;
+                _timerStop.Start();
+            }
+            catch (Exception ex)
+            {
+                _imageProcessor.StopRecordVideo(true);
+                CloseSession();
+                OpenSession();
+                StartLiveView();
+                IsRecordingVideo = false;
+                TakeVideoCommand.CanExecute(null);
+                LabelTakeVideo = "Oops, an error please try again";
+            }
         }
 
         private bool _isRecordingVideo;
@@ -299,13 +330,13 @@ namespace KonigLabs.FantaEmotion.ViewModel.ViewModels
         public Visibility VisiblePreview { set; get; }
         
 
-        public IAsyncCommand TakeVideoCommand
+        public RelayCommand TakeVideoCommand
         {
             get
             {
                 return _takeVideoCommand ??
-                       (_takeVideoCommand =
-                           AsyncCommand.Create(RecordVideo, () => !IsRecordingVideo));
+                       (_takeVideoCommand =new 
+                           RelayCommand(RecordVideo, () => !IsRecordingVideo));
             }
         }
 
