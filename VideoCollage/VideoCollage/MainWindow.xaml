@@ -45,7 +45,7 @@
                                 <ScaleTransform/>
                             </TransformGroup>
                         </Grid.RenderTransform>
-                        <MediaElement Name="myMediaElement" Height="150" Width="200" LoadedBehavior="Manual"  Source="{Binding VideoPath}"  >
+                        <MediaElement Name="myMediaElement" Height="150" Width="200"  LoadedBehavior="Manual"   Source="{Binding VideoPath}"  >
                             <MediaElement.Triggers>
                                 <EventTrigger RoutedEvent="MediaElement.Loaded">
                                     <EventTrigger.Actions>

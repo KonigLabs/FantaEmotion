@@ -26,20 +26,7 @@ namespace VideoCollage
           
         }
 
-      
 
-        private void MediaElement_OnMediaEnded(object sender, RoutedEventArgs e)
-        {
-            ((MediaElement)sender).Position = TimeSpan.FromSeconds(0);
-            ((MediaElement)sender).Play();
-
-        }
-
-        private void MediaElement_OnMediaOpened(object sender, RoutedEventArgs e)
-        {
-            ((MediaElement)sender).Position = TimeSpan.FromSeconds(0);
-            ((MediaElement)sender).Play();
-        }
     }
 
     
