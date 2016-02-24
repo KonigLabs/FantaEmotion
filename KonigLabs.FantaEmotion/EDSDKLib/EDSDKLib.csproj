@@ -78,7 +78,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>xcopy "$(SolutionDir).\EDSDKLib\Resources\*.dll" "$(SolutionDir)KonigLabs.FantaEmotion.View\bin\Debug\" /Y /I</PreBuildEvent>
+    <PreBuildEvent>xcopy "$(SolutionDir).\EDSDKLib\Resources\*.dll" "$(SolutionDir)KonigLabs.FantaEmotion.View\bin\Debug\" /Y /I
+xcopy "$(SolutionDir).\EDSDKLib\Resources\*.dll" "$(SolutionDir)KonigLabs.FantaEmotion.View\bin\Release\" /Y /I</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
