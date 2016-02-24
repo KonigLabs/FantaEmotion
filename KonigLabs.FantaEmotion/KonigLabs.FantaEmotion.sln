@@ -37,6 +37,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{D45D82C0-F
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Main", "Main", "{04A35AF5-47EE-4B97-BD32-E9F3289ED17F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utilities", "Utilities", "{8620B20B-7F4E-4FB5-9CE7-56F7ECD53681}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\..\..\Downloads\ffmpeg-20160224-git-10fa50c-win32-static\bin\ffmpeg.exe = ..\..\..\..\Downloads\ffmpeg-20160224-git-10fa50c-win32-static\bin\ffmpeg.exe
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
