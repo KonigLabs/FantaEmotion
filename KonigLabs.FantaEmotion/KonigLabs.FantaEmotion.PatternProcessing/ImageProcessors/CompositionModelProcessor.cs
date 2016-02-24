@@ -164,7 +164,6 @@ namespace KonigLabs.FantaEmotion.PatternProcessing.ImageProcessors
             var resultVideo = lastVideo?.FullName;
             if (lastVideo != null)
             {
-                var baseDir = AppDomain.CurrentDomain.BaseDirectory;
                 Process.Start("ffmpeg.exe",
                     $"-i \"{info.FullName}\\{lastVideo.Name}\" -vf scale=400x226 \"{info.FullName}\\Min{lastVideo.Name}\"");
                 resultVideo = resultVideo.Replace(lastVideo.Name, "Min" + lastVideo.Name);
