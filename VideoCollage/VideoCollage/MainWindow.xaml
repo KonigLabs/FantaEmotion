@@ -80,9 +80,9 @@
             </ItemsControl.ItemTemplate>
         </ItemsControl>
         <Border x:Name="FullBorder" Width="1" Height="1" BorderThickness="2" HorizontalAlignment="Left" VerticalAlignment="Top">
-            <MediaElement x:Name="FullMedia" IsMuted="True" Stretch="UniformToFill">
+            <controls:MediaUriElement x:Name="FullMedia"  Stretch="UniformToFill">
  
-            </MediaElement>
+            </controls:MediaUriElement>
         </Border>
     </Grid>
 </Window>
