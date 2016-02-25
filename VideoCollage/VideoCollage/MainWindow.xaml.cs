@@ -90,7 +90,7 @@ namespace VideoCollage
                     Storyboard.SetTargetProperty(marginAnimation, new PropertyPath(MarginProperty));
                     storyBoard.Completed += (c, a) =>
                     {
-                        FullBorder.Visibility = Visibility.Collapsed; ;
+                        FullBorder.Visibility = Visibility.Collapsed;
                     };
                     FullBorder.BeginStoryboard(storyBoard);
 

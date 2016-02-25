@@ -25,18 +25,10 @@
                 <DataTemplate>
                     <DataTemplate.Resources>
                         <Storyboard x:Key="ItemAnimation" AutoReverse="False">
-                            <DoubleAnimationUsingKeyFrames BeginTime="0:0:5.0"  Storyboard.TargetName="MediaGrid" Storyboard.TargetProperty="(UIElement.Opacity)">
+                            <DoubleAnimationUsingKeyFrames BeginTime="0:0:6"  Storyboard.TargetName="MediaGrid" Storyboard.TargetProperty="(UIElement.Opacity)">
                                 <EasingDoubleKeyFrame KeyTime="0" Value="0" />
                                 <EasingDoubleKeyFrame  KeyTime="0:0:1.0" Value="1" />
                             </DoubleAnimationUsingKeyFrames>
-                            <!--<DoubleAnimationUsingKeyFrames Storyboard.TargetName="MediaGrid" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)">
-                                <EasingDoubleKeyFrame KeyTime="0" Value="5" />
-                                <EasingDoubleKeyFrame KeyTime="0:0:6.5" Value="1" />
-                            </DoubleAnimationUsingKeyFrames>
-                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="MediaGrid" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)">
-                                <EasingDoubleKeyFrame KeyTime="0" Value="5" />
-                                <EasingDoubleKeyFrame KeyTime="0:0:6.5" Value="1" />
-                            </DoubleAnimationUsingKeyFrames>-->
                         </Storyboard>
                     </DataTemplate.Resources>
 
@@ -53,26 +45,6 @@
                         </Grid.RenderTransform>
 
                         <controls:MediaUriElement x:Name="myMediaElement" Loaded="MyMediaElement_OnLoaded" Height="113" Width="200" Loop="True" Source="{Binding VideoPath}"></controls:MediaUriElement>
-
-                        <!--<MediaElement Name="myMediaElement" Height="113" Width="200"  LoadedBehavior="Manual"   Source="{Binding VideoPath}"  >
-                            <MediaElement.Triggers>
-                                <EventTrigger RoutedEvent="MediaElement.Loaded">
-                                    <EventTrigger.Actions>
-                                        <BeginStoryboard>
-                                            <Storyboard>
-
-                                                --><!-- The MediaTimeline has a RepeatBehavior="Forever" which makes the media play
-                     over and over indefinitely.--><!--
-                                                <MediaTimeline Source="{Binding VideoPath}" Storyboard.TargetName="myMediaElement"  
-                 RepeatBehavior="Forever" />
-
-                                            </Storyboard>
-                                        </BeginStoryboard>
-                                    </EventTrigger.Actions>
-                                </EventTrigger>
-                            </MediaElement.Triggers>
-
-                        </MediaElement>-->
                     </Grid>
                     
                     
