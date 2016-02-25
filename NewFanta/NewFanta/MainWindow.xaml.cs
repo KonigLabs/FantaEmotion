@@ -24,6 +24,8 @@ namespace NewFanta
     /// </summary>
     public partial class MainWindow:IDisposable
     {
+
+        public static string SavePathName = "savepath.txt";
         public MainWindow()
         {
             InitializeComponent();
@@ -34,8 +36,26 @@ namespace NewFanta
             VideoResultControl.Visibility = Visibility.Collapsed;
         }
 
-        public static DirectoryInfo GetVideoDirectory()
+        public static DirectoryInfo GetLocalVideoDirectory()
         {
+            var baseDir = AppDomain.CurrentDomain.BaseDirectory;
+            return !Directory.Exists(System.IO.Path.Combine(baseDir, "Videos"))
+                ? Directory.CreateDirectory(System.IO.Path.Combine(baseDir, "Videos"))
+                : new DirectoryInfo(System.IO.Path.Combine(baseDir, "Videos"));
+        }
+        public static DirectoryInfo GetRemoteVideoDirectory()
+        {
+            if (File.Exists(SavePathName))
+            {
+                using (var stream = File.OpenText(SavePathName))
+                {
+                    var path = stream.ReadLine();
+                    if (Directory.Exists(path))
+                    {
+                        return new DirectoryInfo(path);
+                    }
+                }
+            }
             var baseDir = AppDomain.CurrentDomain.BaseDirectory;
             return !Directory.Exists(System.IO.Path.Combine(baseDir, "Videos"))
                 ? Directory.CreateDirectory(System.IO.Path.Combine(baseDir, "Videos"))
@@ -46,7 +66,8 @@ namespace NewFanta
         /// </summary>
         private void Continue(object sender, EventArgs e)
         {
-            var info = GetVideoDirectory();
+            var info = GetLocalVideoDirectory();
+            var remoteInfo = GetRemoteVideoDirectory();
             //Получаем спискок видео
             var lastVideo = info.EnumerateFiles("MVI*.mov").OrderByDescending(p => p.CreationTimeUtc).FirstOrDefault();
             if (lastVideo != null)
@@ -57,7 +78,7 @@ namespace NewFanta
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.CreateNoWindow = true;
                 process.StartInfo.FileName = "ffmpeg.exe";
-                process.StartInfo.Arguments = $"-i \"{info.FullName}\\{lastVideo.Name}\" -vf scale=400x226 \"{info.FullName}\\Min{lastVideo.Name}\"";
+                process.StartInfo.Arguments = $"-i \"{info.FullName}\\{lastVideo.Name}\" -vf scale=400x226 \"{remoteInfo.FullName}\\Min{lastVideo.Name}\"";
                 process.Start();
                 process.WaitForExit();
                 //Грохаем орегинал
@@ -74,7 +95,7 @@ namespace NewFanta
         private void VideoRepeat(object sender, EventArgs e)
         {
             //Грохаем последний файл
-            var info = GetVideoDirectory();
+            var info = GetLocalVideoDirectory();
             var lastVideo = info.EnumerateFiles("MVI*.mov").OrderByDescending(p => p.CreationTimeUtc).FirstOrDefault();
             if (lastVideo != null)
                 lastVideo.Delete();
@@ -90,7 +111,7 @@ namespace NewFanta
         /// </summary>
         private void TakeVideoSave(object sender, EventArgs e)
         {
-            var info = GetVideoDirectory();
+            var info = GetLocalVideoDirectory();
             var lastVideo = info.EnumerateFiles("MVI*.mov").OrderByDescending(p => p.CreationTimeUtc).FirstOrDefault();
             if (lastVideo != null)
             {

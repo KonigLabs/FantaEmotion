@@ -210,3 +210,8 @@ FakesAssemblies/
 GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
+
+#dll cannon sdk
+!/NewFanta/NewFanta/*.dll
+#ffmpeg
+!/NewFanta/NewFanta/*.exe

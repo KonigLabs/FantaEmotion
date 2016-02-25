@@ -196,7 +196,7 @@ namespace NewFanta.Controls
                 _timerStart.Tick -= TimerTick;
                 try
                 {
-                    _handler.StartFilming(MainWindow.GetVideoDirectory().FullName);
+                    _handler.StartFilming(MainWindow.GetLocalVideoDirectory().FullName);
                     LabelTakeVideo = _normalText;
                 }
                 catch (Exception ex)
