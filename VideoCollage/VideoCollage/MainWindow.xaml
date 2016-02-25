@@ -3,7 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:VideoCollage" ResizeMode="NoResize"
+        xmlns:local="clr-namespace:VideoCollage"
+        xmlns:controls="clr-namespace:WPFMediaKit.DirectShow.Controls;assembly=WPFMediaKit"
+        ResizeMode="NoResize"
         mc:Ignorable="d"
         Title="MainWindow" WindowStyle="None" SizeToContent="WidthAndHeight">
 
@@ -45,15 +47,18 @@
                                 <ScaleTransform/>
                             </TransformGroup>
                         </Grid.RenderTransform>
-                        <MediaElement Name="myMediaElement" Height="113" Width="200"  LoadedBehavior="Manual"   Source="{Binding VideoPath}"  >
+
+                        <controls:MediaUriElement x:Name="myMediaElement" Height="113" Width="200" Loop="True" Source="{Binding VideoPath}"></controls:MediaUriElement>
+
+                        <!--<MediaElement Name="myMediaElement" Height="113" Width="200"  LoadedBehavior="Manual"   Source="{Binding VideoPath}"  >
                             <MediaElement.Triggers>
                                 <EventTrigger RoutedEvent="MediaElement.Loaded">
                                     <EventTrigger.Actions>
                                         <BeginStoryboard>
                                             <Storyboard>
 
-                                                <!-- The MediaTimeline has a RepeatBehavior="Forever" which makes the media play
-                     over and over indefinitely.-->
+                                                --><!-- The MediaTimeline has a RepeatBehavior="Forever" which makes the media play
+                     over and over indefinitely.--><!--
                                                 <MediaTimeline Source="{Binding VideoPath}" Storyboard.TargetName="myMediaElement"  
                  RepeatBehavior="Forever" />
 
@@ -63,7 +68,7 @@
                                 </EventTrigger>
                             </MediaElement.Triggers>
 
-                        </MediaElement>
+                        </MediaElement>-->
                     </Grid>
                     
                     
