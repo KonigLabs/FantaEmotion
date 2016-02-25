@@ -1,0 +1,33 @@
+﻿<UserControl x:Class="NewFanta.Controls.VideoResult"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:NewFanta.Controls"
+             mc:Ignorable="d" Height="1080" Width="1920">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+            <MediaElement Name="PreviewVideo" LoadedBehavior="Play" UnloadedBehavior="Manual" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="320,90,0,0"  Width="1280" Height="768" MediaEnded="PreviewVideoMediaEnded"/>
+            <Button Content="повторить" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="506,948,0,0" Width="396" Height="98" Click="OnRepeat">
+            <Button.Template>
+                <ControlTemplate>
+                    <Border CornerRadius="20" Background="White" BorderBrush="#b8b262" BorderThickness="2">
+                        <TextBlock Text="{Binding Path=Content, RelativeSource={RelativeSource TemplatedParent}}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="32" FontFamily="Comic Sans MS" FontWeight="Bold"/>
+                    </Border>
+                </ControlTemplate>
+            </Button.Template>
+        </Button>
+            <Button Content="продолжить"  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="1018,948,0,0" Width="396" Height="98" Click="OnContinue">
+            <Button.Template>
+                <ControlTemplate>
+                    <Border CornerRadius="20" Background="White" BorderBrush="#b8b262" BorderThickness="2">
+                        <TextBlock Text="{Binding Path=Content, RelativeSource={RelativeSource TemplatedParent}}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="32" FontFamily="Comic Sans MS" FontWeight="Bold"/>
+                    </Border>
+                </ControlTemplate>
+            </Button.Template>
+            </Button>
+    </Grid>
+</UserControl>
