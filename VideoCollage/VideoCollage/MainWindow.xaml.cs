@@ -17,17 +17,12 @@ namespace VideoCollage
     /// </summary>
     public partial class MainWindow : Window
     {
-
-
         public MainWindow()
         {
             DataContext = new MainWindowViewModel();
-            InitializeComponent();          
-          
+            InitializeComponent();
+
         }
-
-
     }
 
-    
 }

@@ -9,11 +9,11 @@
 
     <Grid Width="850" Height="488">
         <Grid.Background>
-            <ImageBrush ImageSource="Resources/bg.png">
+            <ImageBrush ImageSource="{Binding BgSource}">
             </ImageBrush>
         </Grid.Background>
 
-        <ItemsControl HorizontalContentAlignment="Center" VerticalContentAlignment="Center" ItemsSource="{Binding Path=MediaElementViewModels}">
+        <ItemsControl HorizontalContentAlignment="Center" VerticalContentAlignment="Center" ItemsSource="{Binding Path=MediaElementViewModels}" HorizontalAlignment="Center">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapPanel />
@@ -39,7 +39,7 @@
                             <BeginStoryboard Storyboard="{StaticResource ItemAnimation}" />
                         </EventTrigger>
                     </DataTemplate.Triggers>
-                    <Grid x:Name="MediaGrid" Margin="6">
+                    <Grid x:Name="MediaGrid"  HorizontalAlignment="Center">
                         <Grid.RenderTransform>
                             <TransformGroup>
                                 <ScaleTransform/>
