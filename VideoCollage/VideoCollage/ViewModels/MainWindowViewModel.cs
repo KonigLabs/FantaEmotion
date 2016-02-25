@@ -47,6 +47,7 @@ namespace VideoCollage.ViewModels
 
         private void FirstInit()
         {
+            BgSource = "/Resources/Fantabg2.jpg";
             var files = Directory.GetFiles(_videoPath).ToList();
             foreach (var file in files)
             {
