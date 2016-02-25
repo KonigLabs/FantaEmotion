@@ -13,7 +13,7 @@ using Application = System.Windows.Application;
 
 namespace VideoCollage.ViewModels
 {
-    public class MainWindowViewModel:INotifyPropertyChanged
+    public class MainWindowViewModel : INotifyPropertyChanged
     {
 
         private string _bgSource;
@@ -47,10 +47,13 @@ namespace VideoCollage.ViewModels
 
         private void FirstInit()
         {
-            BgSource = "/Resources/Fantabg2.jpg";
             var files = Directory.GetFiles(_videoPath).ToList();
             foreach (var file in files)
             {
+                if (Path.GetExtension(file) != ".MOV")
+                    continue;
+                BgSource = "/Resources/Fantabg2.jpg";
+
                 MediaElementViewModels.Add(new MediaElementViewModel(file));
                 if (MediaElementViewModels.Count == 12)
                     return;

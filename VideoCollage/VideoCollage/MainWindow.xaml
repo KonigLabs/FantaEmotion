@@ -13,7 +13,7 @@
             </ImageBrush>
         </Grid.Background>
 
-        <ItemsControl HorizontalContentAlignment="Center" Margin="0,75,0,0" VerticalContentAlignment="Center" ItemsSource="{Binding Path=MediaElementViewModels}" VerticalAlignment="Top" HorizontalAlignment="Center">
+        <ItemsControl HorizontalContentAlignment="Center"  Margin="20,75,0,0" VerticalContentAlignment="Center" ItemsSource="{Binding Path=MediaElementViewModels}" VerticalAlignment="Top" HorizontalAlignment="Left">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapPanel />
