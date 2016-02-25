@@ -17,6 +17,7 @@ namespace VideoCollage.ViewModels
     {
 
         private string _bgSource;
+
         public string BgSource
         {
             get { return _bgSource; }
@@ -35,12 +36,20 @@ namespace VideoCollage.ViewModels
 
             FileSystemWatcher watcher = new FileSystemWatcher();
             watcher.Created += new FileSystemEventHandler(Watcher_Changed);
-            watcher.Path = Directory.GetCurrentDirectory() + @"\Videos";
+            if (File.Exists("watchpath.txt"))
+            {
+                using (var f = File.OpenText("watchpath.txt"))
+                {
+                    watcher.Path = f.ReadLine();
+                }
+            }
+            else
+            {
+                watcher.Path = Directory.GetCurrentDirectory() + @"\Videos";
+            }
             // Begin watching.
             watcher.EnableRaisingEvents = true;
             FirstInit();
-
-
         }
 
         private string _videoPath = "Videos";

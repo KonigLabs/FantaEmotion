@@ -111,9 +111,15 @@
     </Resource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Dlls\DirectShowLib-2005.dll" />
-    <Content Include="Dlls\EVRPresenter32.dll" />
-    <Content Include="Dlls\WPFMediaKit.dll" />
+    <Content Include="Dlls\DirectShowLib-2005.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Dlls\EVRPresenter32.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Dlls\WPFMediaKit.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
