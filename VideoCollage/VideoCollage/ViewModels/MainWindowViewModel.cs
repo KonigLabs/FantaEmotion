@@ -18,6 +18,7 @@ namespace VideoCollage.ViewModels
 
         private string _bgSource;
 
+
         public string BgSource
         {
             get { return _bgSource; }
@@ -40,7 +41,8 @@ namespace VideoCollage.ViewModels
             {
                 using (var f = File.OpenText("watchpath.txt"))
                 {
-                    watcher.Path = f.ReadLine();
+                    _videoPath = watcher.Path = f.ReadLine();
+
                 }
             }
             else

@@ -21,7 +21,8 @@ namespace VideoCollage
             }
             catch (Exception ex)
             {
-                
+                MessageBox.Show(ex.ToString());
+                Application.Current.Shutdown();
             }
             
         }
