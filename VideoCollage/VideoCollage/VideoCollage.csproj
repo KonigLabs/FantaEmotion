@@ -110,6 +110,11 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Dlls\DirectShowLib-2005.dll" />
+    <Content Include="Dlls\EVRPresenter32.dll" />
+    <Content Include="Dlls\WPFMediaKit.dll" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>xcopy "$(SolutionDir)VideoCollage\Dlls\DirectShowLib-2005.dll" "$(SolutionDir)KonigLabs.FantaEmotion.View\bin\Debug\" /Y /I</PreBuildEvent>

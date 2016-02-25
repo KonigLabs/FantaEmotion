@@ -52,7 +52,7 @@
                             </TransformGroup>
                         </Grid.RenderTransform>
 
-                        <controls:MediaUriElement x:Name="myMediaElement" Height="113" Width="200" Loop="True" Source="{Binding VideoPath}"></controls:MediaUriElement>
+                        <controls:MediaUriElement x:Name="myMediaElement" Loaded="MyMediaElement_OnLoaded" Height="113" Width="200" Loop="True" Source="{Binding VideoPath}"></controls:MediaUriElement>
 
                         <!--<MediaElement Name="myMediaElement" Height="113" Width="200"  LoadedBehavior="Manual"   Source="{Binding VideoPath}"  >
                             <MediaElement.Triggers>

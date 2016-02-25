@@ -9,6 +9,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using VideoCollage.ViewModels;
+using WPFMediaKit.DirectShow.Controls;
 
 namespace VideoCollage
 {
@@ -26,10 +27,10 @@ namespace VideoCollage
 
         private void MyMediaElement_OnLoaded(object sender, RoutedEventArgs e)
         {
-            ToFull(sender as MediaElement);
+            ToFull(sender as MediaUriElement);
         }
         private Thickness _previewPosition;
-        private void ToFull(MediaElement elem)
+        private void ToFull(MediaUriElement elem)
         {
              
             var p = elem.TransformToVisual(this).Transform(new Point(0, 0));
