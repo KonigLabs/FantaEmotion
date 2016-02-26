@@ -985,7 +985,8 @@ namespace EDSDKLib
                     //release and finish
                     if (stream != IntPtr.Zero) { Error = EDSDK.EdsRelease(stream); }
                     //stop the live view
-                    SetSetting(EDSDK.PropID_Evf_OutputDevice, LVoff ? 0 : EDSDK.EvfOutputDevice_TFT);
+
+                    //SetSetting(EDSDK.PropID_Evf_OutputDevice, LVoff ? 0 : EDSDK.EvfOutputDevice_TFT);
                 }
                 catch { IsLiveViewOn = false; }
             });

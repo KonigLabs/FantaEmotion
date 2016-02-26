@@ -222,6 +222,7 @@ namespace NewFanta.Controls
             _timerStopRecord.Stop();
             try
             {
+                _handler.StartLiveView();
                 _handler.StopFilming();
                 LabelTakeVideo = _normalText;
             }

@@ -10,7 +10,7 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
-            <MediaElement Name="PreviewVideo" LoadedBehavior="Play" UnloadedBehavior="Manual" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="320,90,0,0"  Width="1280" Height="768" MediaEnded="PreviewVideoMediaEnded"/>
+            <MediaElement Name="PreviewVideo" IsMuted="True" LoadedBehavior="Play" UnloadedBehavior="Manual" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="320,90,0,0"  Width="1280" Height="768" MediaEnded="PreviewVideoMediaEnded"/>
             <Button Content="повторить" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="506,948,0,0" Width="396" Height="98" Click="OnRepeat">
             <Button.Template>
                 <ControlTemplate>
